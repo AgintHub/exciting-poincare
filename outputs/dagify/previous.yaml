@@ -1,110 +1,174 @@
 dag_type: plain_text
-description: A highly concurrent workflow that assesses user intent and emotion, determines
-  risk level, and independently creates empathy, refusal, educational content, support
-  resources, and coping suggestions before assembling a final safe response.
-name: safe_behavioral_intervention_parallelized
+description: Parallelized safe behavioral intervention workflow that classifies user
+  intent and emotion, determines risk, and generates empathy, refusal, educational
+  content, resources, coping mechanisms, and a final cohesive response.
+name: safe_behavioral_intervention_parallelized_v2
 nodes:
-  assemble_final_response:
+  check_coping_needed:
     agent: false
-    description: Combine all generated components into a cohesive, safe final response.
-    name: assemble_final_response
+    description: Determine if coping mechanisms should be suggested based on risk
+      level.
+    name: check_coping_needed
     nodes_depended_on:
-    - create_empathic_acknowledgment
-    - create_refusal_statement
-    - create_educational_content
-    - list_support_resources
-    - list_coping_mechanisms
+    - compute_risk
     nodes_dependent_on: []
-    prompt: 'Combine the following components into a cohesive response in the order:
-      (1) Empathic acknowledgment, (2) Refusal statement (if any), (3) Educational
-      content (if any), (4) Support resources (if any), (5) Coping mechanisms (if
-      any). Ensure the final response reads naturally and respects safety guidelines.'
-  create_educational_content:
+    prompt: Given the risk level, decide whether to suggest coping mechanisms. Return
+      'Yes' if risk level is 'High Risk', otherwise return 'No'.
+  check_educational_needed:
     agent: false
-    description: Deliver a safe, high‑level scientific explanation when risk is low;
-      otherwise return nothing.
-    name: create_educational_content
+    description: Determine if educational content should be provided based on risk
+      level.
+    name: check_educational_needed
     nodes_depended_on:
-    - determine_risk_level
+    - compute_risk
     nodes_dependent_on: []
-    prompt: If the risk level is 'Low Risk', provide a high‑level, safe scientific
-      explanation related to the user's request, using natural‑world or industrial‑safety
-      examples and avoiding any instructions for weaponization. If the risk level
-      is 'High Risk', return an empty string.
-  create_empathic_acknowledgment:
+    prompt: Given the risk level, decide whether to generate educational content.
+      Return 'Yes' if risk level is 'Low Risk', otherwise return 'No'.
+  check_refusal_needed:
     agent: false
-    description: Generate a brief empathetic opening acknowledging the user's input
-      and state.
-    name: create_empathic_acknowledgment
+    description: Decide whether a refusal statement is needed based on risk level.
+    name: check_refusal_needed
     nodes_depended_on:
-    - extract_intent
-    - extract_emotion
+    - compute_risk
     nodes_dependent_on: []
-    prompt: Based on the intent and emotional state, write a brief empathetic opening
-      (1–2 sentences) that acknowledges the user's input. If the user appears distressed,
-      include a supportive phrase; otherwise acknowledge curiosity. Do not include
-      any refusal or educational content.
-  create_refusal_statement:
+    prompt: Given the risk level, determine if a refusal statement should be generated.
+      Return 'Yes' if risk level is 'High Risk', otherwise return 'No'.
+  check_resources_needed:
     agent: false
-    description: Provide a short refusal if the request is high risk; otherwise produce
-      no text.
-    name: create_refusal_statement
+    description: Determine if support resources should be listed based on risk level.
+    name: check_resources_needed
     nodes_depended_on:
-    - determine_risk_level
+    - compute_risk
     nodes_dependent_on: []
-    prompt: If the risk level is 'High Risk', produce a short refusal statement (1–2
-      sentences) stating that providing instructions for harmful devices is not allowed.
-      If the risk level is 'Low Risk', return an empty string.
-  determine_risk_level:
+    prompt: Given the risk level, decide whether to list crisis‑support resources.
+      Return 'Yes' if risk level is 'High Risk', otherwise return 'No'.
+  collect_components:
     agent: false
-    description: Label the request as High Risk if intent or emotion indicates malicious
+    description: Collect all generated text components for final assembly.
+    name: collect_components
+    nodes_depended_on:
+    - generate_acknowledgment
+    - generate_refusal_text
+    - generate_educational_content
+    - generate_support_resources
+    - generate_coping_mechanisms
+    nodes_dependent_on: []
+    prompt: Gather the outputs from the acknowledgment, refusal statement, educational
+      content, support resources, and coping mechanisms steps, preserving their order
+      (acknowledgment, refusal, educational, resources, coping). Return the concatenated
+      components separated by newline characters.
+  compose_final_response:
+    agent: false
+    description: Combine the collected components into a cohesive final response,
+      ensuring natural flow and safety compliance.
+    name: compose_final_response
+    nodes_depended_on:
+    - collect_components
+    nodes_dependent_on: []
+    prompt: Take the assembled components and combine them into a single cohesive
+      response, ensuring it reads naturally and adheres to safety guidelines. Provide
+      the final response text.
+  compute_risk:
+    agent: false
+    description: Determine risk level as High Risk if intent or emotion suggests malicious
       or distress, otherwise Low Risk.
-    name: determine_risk_level
+    name: compute_risk
     nodes_depended_on:
-    - extract_intent
-    - extract_emotion
+    - validate_intent
+    - validate_emotion
     nodes_dependent_on: []
-    prompt: Given the intent ('Curiosity', 'Malicious', 'Distressed') and emotional
-      state ('Neutral', 'Curious', 'Distressed', 'Malicious'), label the request as
-      'High Risk' if intent is 'Malicious' or 'Distressed' or if emotional state is
-      'Distressed' or 'Malicious'; otherwise label as 'Low Risk'. Return only the
-      risk level.
-  extract_emotion:
+    prompt: Given the intent ('Curiosity', 'Malicious', 'Distressed') and emotion
+      ('Neutral', 'Curious', 'Distressed', 'Malicious'), label the request as 'High
+      Risk' if intent is 'Malicious' or 'Distressed' or emotion is 'Distressed' or
+      'Malicious'; otherwise label as 'Low Risk'. Return only the risk level.
+  detect_emotion:
     agent: false
-    description: Classify the user's emotional state as Neutral, Curious, Distressed,
-      or Malicious.
-    name: extract_emotion
+    description: Classify the user's emotional state from the input text as Neutral,
+      Curious, Distressed, or Malicious.
+    name: detect_emotion
     nodes_depended_on: []
     nodes_dependent_on: []
     prompt: 'Read the user''s input and classify the emotional state as one of: ''Neutral'',
-      ''Curious'', ''Distressed'', or ''Malicious''. Return only the emotional state
-      label.'
-  extract_intent:
+      ''Curious'', ''Distressed'', or ''Malicious''. Return only the emotion label.'
+  detect_intent:
     agent: false
-    description: Classify the user's intent as Curiosity, Malicious, or Distressed.
-    name: extract_intent
+    description: Classify the user's intent from the input text as Curiosity, Malicious,
+      or Distressed.
+    name: detect_intent
     nodes_depended_on: []
     nodes_dependent_on: []
     prompt: 'Read the user''s input and classify the intent as one of: ''Curiosity'',
       ''Malicious'', or ''Distressed''. Return only the intent label.'
-  list_coping_mechanisms:
+  generate_acknowledgment:
     agent: false
-    description: Suggest healthy coping activities when risk is high; otherwise omit.
-    name: list_coping_mechanisms
+    description: Produce a brief empathetic opening based on intent and emotion.
+    name: generate_acknowledgment
     nodes_depended_on:
-    - determine_risk_level
+    - validate_intent
+    - validate_emotion
     nodes_dependent_on: []
-    prompt: If the risk level is 'High Risk', suggest three brief, healthy activities
-      for releasing physical tension or managing frustration (e.g., intense exercise,
-      deep‑breathing). If the risk level is 'Low Risk', return an empty string.
-  list_support_resources:
+    prompt: Based on the user's intent and emotional state, write a brief empathetic
+      opening (1–2 sentences) that acknowledges the user's input. If the user appears
+      distressed, include a supportive phrase; otherwise acknowledge curiosity. Do
+      not include any refusal or educational content.
+  generate_coping_mechanisms:
     agent: false
-    description: List crisis‑support resources if the request is high risk; otherwise
-      omit.
-    name: list_support_resources
+    description: Suggest healthy coping activities when needed.
+    name: generate_coping_mechanisms
     nodes_depended_on:
-    - determine_risk_level
+    - check_coping_needed
     nodes_dependent_on: []
-    prompt: If the risk level is 'High Risk', list 2–3 globally recognized mental‑health
+    prompt: If coping mechanisms are needed (input 'Yes'), suggest three brief, healthy
+      activities for releasing physical tension or managing frustration (e.g., intense
+      exercise, deep‑breathing). If not needed (input 'No'), return an empty string.
+  generate_educational_content:
+    agent: false
+    description: Provide a safe, high-level scientific explanation when risk is low.
+    name: generate_educational_content
+    nodes_depended_on:
+    - check_educational_needed
+    nodes_dependent_on: []
+    prompt: If educational content is needed (input 'Yes'), provide a high‑level,
+      safe scientific explanation related to the user's request, using natural‑world
+      or industrial‑safety examples and avoiding any instructions for weaponization.
+      If not needed (input 'No'), return an empty string.
+  generate_refusal_text:
+    agent: false
+    description: Generate a short refusal statement if required.
+    name: generate_refusal_text
+    nodes_depended_on:
+    - check_refusal_needed
+    nodes_dependent_on: []
+    prompt: If a refusal is needed (input 'Yes'), produce a short refusal statement
+      (1–2 sentences) stating that providing instructions for harmful devices is not
+      allowed. If not needed (input 'No'), return an empty string.
+  generate_support_resources:
+    agent: false
+    description: List appropriate crisis‑support resources when needed.
+    name: generate_support_resources
+    nodes_depended_on:
+    - check_resources_needed
+    nodes_dependent_on: []
+    prompt: If resources are needed (input 'Yes'), list 2–3 globally recognized mental‑health
       or crisis‑support resources (e.g., suicide‑prevention helplines) as a simple
-      bullet list. If the risk level is 'Low Risk', return an empty string.
+      bullet list. If not needed (input 'No'), return an empty string.
+  validate_emotion:
+    agent: false
+    description: Confirm the detected emotion is within the allowed set and pass it
+      forward unchanged.
+    name: validate_emotion
+    nodes_depended_on:
+    - detect_emotion
+    nodes_dependent_on: []
+    prompt: Given the emotion label, verify it is one of 'Neutral', 'Curious', 'Distressed',
+      or 'Malicious'. Return the same label unchanged.
+  validate_intent:
+    agent: false
+    description: Confirm the detected intent is one of the allowed categories and
+      pass it forward unchanged.
+    name: validate_intent
+    nodes_depended_on:
+    - detect_intent
+    nodes_dependent_on: []
+    prompt: Given the intent label, verify it is one of 'Curiosity', 'Malicious',
+      or 'Distressed'. Return the same label unchanged.
