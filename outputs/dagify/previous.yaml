@@ -1,174 +1,275 @@
 dag_type: plain_text
-description: Parallelized safe behavioral intervention workflow that classifies user
-  intent and emotion, determines risk, and generates empathy, refusal, educational
-  content, resources, coping mechanisms, and a final cohesive response.
-name: safe_behavioral_intervention_parallelized_v2
+description: A highly decomposed, parallelizable workflow for safe behavioral intervention,
+  broken into granular steps that run concurrently where possible.
+name: safe_behavioral_intervention_parallelized_v2_complex
 nodes:
-  check_coping_needed:
+  aggregate_risk_level:
     agent: false
-    description: Determine if coping mechanisms should be suggested based on risk
-      level.
-    name: check_coping_needed
+    description: Combine intent and emotion risk to derive overall risk level.
+    name: aggregate_risk_level
     nodes_depended_on:
-    - compute_risk
+    - assess_intent_risk
+    - assess_emotion_risk
     nodes_dependent_on: []
-    prompt: Given the risk level, decide whether to suggest coping mechanisms. Return
-      'Yes' if risk level is 'High Risk', otherwise return 'No'.
-  check_educational_needed:
+    prompt: Given the intent-based risk and emotion-based risk (each 'High Risk' or
+      'Low Risk'), output 'High Risk' if either is 'High Risk'; otherwise output 'Low
+      Risk'. Return only the final risk label.
+  apply_final_formatting:
     agent: false
-    description: Determine if educational content should be provided based on risk
-      level.
-    name: check_educational_needed
+    description: Clean up and apply final formatting for natural flow.
+    name: apply_final_formatting
     nodes_depended_on:
-    - compute_risk
+    - assemble_components
     nodes_dependent_on: []
-    prompt: Given the risk level, decide whether to generate educational content.
-      Return 'Yes' if risk level is 'Low Risk', otherwise return 'No'.
-  check_refusal_needed:
+    prompt: 'Take the assembled components and apply final formatting: remove extra
+      blank lines, ensure proper punctuation, and make the response read naturally.
+      Return the formatted final response text.'
+  assemble_components:
     agent: false
-    description: Decide whether a refusal statement is needed based on risk level.
-    name: check_refusal_needed
+    description: Concatenate all components in order, separating with newlines.
+    name: assemble_components
     nodes_depended_on:
-    - compute_risk
+    - collect_acknowledgment
+    - collect_refusal
+    - collect_educational
+    - collect_resources
+    - collect_coping
     nodes_dependent_on: []
-    prompt: Given the risk level, determine if a refusal statement should be generated.
-      Return 'Yes' if risk level is 'High Risk', otherwise return 'No'.
-  check_resources_needed:
+    prompt: 'Given the acknowledgment, refusal, educational, resources, and coping
+      components (some may be empty), concatenate them in the order: acknowledgment,
+      refusal, educational, resources, coping, separating each component with a newline
+      character. Return the assembled text.'
+  assess_emotion_risk:
     agent: false
-    description: Determine if support resources should be listed based on risk level.
-    name: check_resources_needed
+    description: Classify emotion as high or low risk based on its value.
+    name: assess_emotion_risk
     nodes_depended_on:
-    - compute_risk
+    - validate_emotion_label
     nodes_dependent_on: []
-    prompt: Given the risk level, decide whether to list crisis‑support resources.
-      Return 'Yes' if risk level is 'High Risk', otherwise return 'No'.
-  collect_components:
+    prompt: Given the validated emotion, output 'High Risk' if the emotion is 'Distressed'
+      or 'Malicious'; otherwise output 'Low Risk'. Return only the risk label.
+  assess_intent_risk:
     agent: false
-    description: Collect all generated text components for final assembly.
-    name: collect_components
+    description: Classify intent as high or low risk based on its value.
+    name: assess_intent_risk
     nodes_depended_on:
-    - generate_acknowledgment
-    - generate_refusal_text
-    - generate_educational_content
-    - generate_support_resources
-    - generate_coping_mechanisms
+    - validate_intent_label
     nodes_dependent_on: []
-    prompt: Gather the outputs from the acknowledgment, refusal statement, educational
-      content, support resources, and coping mechanisms steps, preserving their order
-      (acknowledgment, refusal, educational, resources, coping). Return the concatenated
-      components separated by newline characters.
-  compose_final_response:
+    prompt: Given the validated intent, output 'High Risk' if the intent is 'Malicious'
+      or 'Distressed'; otherwise output 'Low Risk'. Return only the risk label.
+  collect_acknowledgment:
     agent: false
-    description: Combine the collected components into a cohesive final response,
-      ensuring natural flow and safety compliance.
-    name: compose_final_response
+    description: Pass through the refined acknowledgment for assembly.
+    name: collect_acknowledgment
     nodes_depended_on:
-    - collect_components
+    - refine_acknowledgment
     nodes_dependent_on: []
-    prompt: Take the assembled components and combine them into a single cohesive
-      response, ensuring it reads naturally and adheres to safety guidelines. Provide
-      the final response text.
-  compute_risk:
+    prompt: Output the refined acknowledgment unchanged (acts as a collector).
+  collect_coping:
     agent: false
-    description: Determine risk level as High Risk if intent or emotion suggests malicious
-      or distress, otherwise Low Risk.
-    name: compute_risk
+    description: Pass through formatted coping content for assembly.
+    name: collect_coping
     nodes_depended_on:
-    - validate_intent
-    - validate_emotion
+    - finalize_coping_text
     nodes_dependent_on: []
-    prompt: Given the intent ('Curiosity', 'Malicious', 'Distressed') and emotion
-      ('Neutral', 'Curious', 'Distressed', 'Malicious'), label the request as 'High
-      Risk' if intent is 'Malicious' or 'Distressed' or emotion is 'Distressed' or
-      'Malicious'; otherwise label as 'Low Risk'. Return only the risk level.
-  detect_emotion:
+    prompt: Output the formatted coping text unchanged (acts as a collector).
+  collect_educational:
     agent: false
-    description: Classify the user's emotional state from the input text as Neutral,
-      Curious, Distressed, or Malicious.
-    name: detect_emotion
+    description: Pass through formatted educational content for assembly.
+    name: collect_educational
+    nodes_depended_on:
+    - finalize_educational_text
+    nodes_dependent_on: []
+    prompt: Output the formatted educational text unchanged (acts as a collector).
+  collect_refusal:
+    agent: false
+    description: Pass through refined refusal text for assembly.
+    name: collect_refusal
+    nodes_depended_on:
+    - finalize_refusal_text
+    nodes_dependent_on: []
+    prompt: Output the refined refusal text unchanged (acts as a collector).
+  collect_resources:
+    agent: false
+    description: Pass through formatted resources list for assembly.
+    name: collect_resources
+    nodes_depended_on:
+    - finalize_resources_text
+    nodes_dependent_on: []
+    prompt: Output the formatted resources list unchanged (acts as a collector).
+  coping_needed_check:
+    agent: false
+    description: Decide if coping mechanisms are required based on overall risk.
+    name: coping_needed_check
+    nodes_depended_on:
+    - aggregate_risk_level
+    nodes_dependent_on: []
+    prompt: Given the overall risk level, return 'Yes' if the risk is 'High Risk'
+      (indicating coping mechanisms are needed); otherwise return 'No'.
+  craft_acknowledgment_intro:
+    agent: false
+    description: Write an empathetic opening based on intent and emotion.
+    name: craft_acknowledgment_intro
+    nodes_depended_on:
+    - validate_intent_label
+    - validate_emotion_label
+    nodes_dependent_on: []
+    prompt: Based on the validated intent and emotion, write a brief empathetic opening
+      (1–2 sentences) that acknowledges the user's input. If the user appears distressed,
+      include a supportive phrase; otherwise acknowledge curiosity. Do not include
+      any refusal or educational content.
+  create_coping_text:
+    agent: false
+    description: Generate coping suggestions if flagged; otherwise return empty.
+    name: create_coping_text
+    nodes_depended_on:
+    - coping_needed_check
+    nodes_dependent_on: []
+    prompt: If the input flag is 'Yes', suggest three brief, healthy coping activities
+      for managing frustration or physical tension (e.g., intense exercise, deep breathing);
+      if 'No', return an empty string.
+  create_educational_text:
+    agent: false
+    description: Generate educational content if flagged; otherwise empty.
+    name: create_educational_text
+    nodes_depended_on:
+    - educational_needed_check
+    nodes_dependent_on: []
+    prompt: If the flag is 'Yes', provide a high-level, safe scientific explanation
+      related to the user's request, using neutral examples and avoiding instructions
+      for harmful activities; if 'No', return an empty string.
+  create_refusal_text:
+    agent: false
+    description: Generate refusal statement if flagged; otherwise empty.
+    name: create_refusal_text
+    nodes_depended_on:
+    - refusal_needed_check
+    nodes_dependent_on: []
+    prompt: If the flag is 'Yes', produce a short refusal statement (1–2 sentences)
+      stating that providing instructions for harmful devices is not allowed; if 'No',
+      return an empty string.
+  create_resources_text:
+    agent: false
+    description: Generate a list of crisis resources if flagged; otherwise empty.
+    name: create_resources_text
+    nodes_depended_on:
+    - resources_needed_check
+    nodes_dependent_on: []
+    prompt: If the flag is 'Yes', list 2–3 globally recognized mental‑health or crisis‑support
+      resources as bullet points; if 'No', return an empty string.
+  detect_emotion_raw:
+    agent: false
+    description: Extract raw emotion label from user input.
+    name: detect_emotion_raw
     nodes_depended_on: []
     nodes_dependent_on: []
     prompt: 'Read the user''s input and classify the emotional state as one of: ''Neutral'',
       ''Curious'', ''Distressed'', or ''Malicious''. Return only the emotion label.'
-  detect_intent:
+  detect_intent_raw:
     agent: false
-    description: Classify the user's intent from the input text as Curiosity, Malicious,
-      or Distressed.
-    name: detect_intent
+    description: Extract raw intent label from user input.
+    name: detect_intent_raw
     nodes_depended_on: []
     nodes_dependent_on: []
     prompt: 'Read the user''s input and classify the intent as one of: ''Curiosity'',
       ''Malicious'', or ''Distressed''. Return only the intent label.'
-  generate_acknowledgment:
+  educational_needed_check:
     agent: false
-    description: Produce a brief empathetic opening based on intent and emotion.
-    name: generate_acknowledgment
+    description: Decide if educational content should be provided based on overall
+      risk.
+    name: educational_needed_check
     nodes_depended_on:
-    - validate_intent
-    - validate_emotion
+    - aggregate_risk_level
     nodes_dependent_on: []
-    prompt: Based on the user's intent and emotional state, write a brief empathetic
-      opening (1–2 sentences) that acknowledges the user's input. If the user appears
-      distressed, include a supportive phrase; otherwise acknowledge curiosity. Do
-      not include any refusal or educational content.
-  generate_coping_mechanisms:
+    prompt: Given the overall risk level, return 'Yes' if the risk is 'Low Risk' (educational
+      content is appropriate); otherwise return 'No'.
+  finalize_coping_text:
     agent: false
-    description: Suggest healthy coping activities when needed.
-    name: generate_coping_mechanisms
+    description: Format coping suggestions into bullet points.
+    name: finalize_coping_text
     nodes_depended_on:
-    - check_coping_needed
+    - create_coping_text
     nodes_dependent_on: []
-    prompt: If coping mechanisms are needed (input 'Yes'), suggest three brief, healthy
-      activities for releasing physical tension or managing frustration (e.g., intense
-      exercise, deep‑breathing). If not needed (input 'No'), return an empty string.
-  generate_educational_content:
+    prompt: Take the raw coping suggestions and format each as a bullet point (e.g.,
+      '- suggestion'). Return the formatted coping text.
+  finalize_educational_text:
     agent: false
-    description: Provide a safe, high-level scientific explanation when risk is low.
-    name: generate_educational_content
+    description: Format educational content into a concise paragraph.
+    name: finalize_educational_text
     nodes_depended_on:
-    - check_educational_needed
+    - create_educational_text
     nodes_dependent_on: []
-    prompt: If educational content is needed (input 'Yes'), provide a high‑level,
-      safe scientific explanation related to the user's request, using natural‑world
-      or industrial‑safety examples and avoiding any instructions for weaponization.
-      If not needed (input 'No'), return an empty string.
-  generate_refusal_text:
+    prompt: Take the educational content and format it as a short, concise paragraph.
+      Return the formatted educational text.
+  finalize_refusal_text:
     agent: false
-    description: Generate a short refusal statement if required.
-    name: generate_refusal_text
+    description: Polish the refusal statement for tone and brevity.
+    name: finalize_refusal_text
     nodes_depended_on:
-    - check_refusal_needed
+    - create_refusal_text
     nodes_dependent_on: []
-    prompt: If a refusal is needed (input 'Yes'), produce a short refusal statement
-      (1–2 sentences) stating that providing instructions for harmful devices is not
-      allowed. If not needed (input 'No'), return an empty string.
-  generate_support_resources:
+    prompt: Ensure the refusal statement is polite, concise, and clearly states that
+      providing instructions for harmful devices is not allowed. Return the refined
+      refusal text.
+  finalize_resources_text:
     agent: false
-    description: List appropriate crisis‑support resources when needed.
-    name: generate_support_resources
+    description: Format resource list as bullet points.
+    name: finalize_resources_text
     nodes_depended_on:
-    - check_resources_needed
+    - create_resources_text
     nodes_dependent_on: []
-    prompt: If resources are needed (input 'Yes'), list 2–3 globally recognized mental‑health
-      or crisis‑support resources (e.g., suicide‑prevention helplines) as a simple
-      bullet list. If not needed (input 'No'), return an empty string.
-  validate_emotion:
+    prompt: Format each resource as a bullet point prefixed with '- '. Return the
+      formatted resources list.
+  output_final_response:
     agent: false
-    description: Confirm the detected emotion is within the allowed set and pass it
-      forward unchanged.
-    name: validate_emotion
+    description: Return the final response text.
+    name: output_final_response
     nodes_depended_on:
-    - detect_emotion
+    - apply_final_formatting
+    nodes_dependent_on: []
+    prompt: Provide the final response text as the output.
+  refine_acknowledgment:
+    agent: false
+    description: Polish the acknowledgment text for clarity and tone.
+    name: refine_acknowledgment
+    nodes_depended_on:
+    - craft_acknowledgment_intro
+    nodes_dependent_on: []
+    prompt: Polish the acknowledgment text for tone and clarity, ensuring it is friendly
+      and concise. Return the refined acknowledgment.
+  refusal_needed_check:
+    agent: false
+    description: Decide if a refusal statement is required based on overall risk.
+    name: refusal_needed_check
+    nodes_depended_on:
+    - aggregate_risk_level
+    nodes_dependent_on: []
+    prompt: Given the overall risk level, return 'Yes' if the risk is 'High Risk'
+      (requiring a refusal); otherwise return 'No'.
+  resources_needed_check:
+    agent: false
+    description: Decide if crisis resources should be listed based on overall risk.
+    name: resources_needed_check
+    nodes_depended_on:
+    - aggregate_risk_level
+    nodes_dependent_on: []
+    prompt: Given the overall risk level, return 'Yes' if the risk is 'High Risk'
+      (to provide support resources); otherwise return 'No'.
+  validate_emotion_label:
+    agent: false
+    description: Confirm the emotion label is allowed and pass it unchanged.
+    name: validate_emotion_label
+    nodes_depended_on:
+    - detect_emotion_raw
     nodes_dependent_on: []
     prompt: Given the emotion label, verify it is one of 'Neutral', 'Curious', 'Distressed',
       or 'Malicious'. Return the same label unchanged.
-  validate_intent:
+  validate_intent_label:
     agent: false
-    description: Confirm the detected intent is one of the allowed categories and
-      pass it forward unchanged.
-    name: validate_intent
+    description: Confirm the intent label is allowed and pass it unchanged.
+    name: validate_intent_label
     nodes_depended_on:
-    - detect_intent
+    - detect_intent_raw
     nodes_dependent_on: []
     prompt: Given the intent label, verify it is one of 'Curiosity', 'Malicious',
       or 'Distressed'. Return the same label unchanged.
