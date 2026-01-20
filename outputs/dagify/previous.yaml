@@ -1,120 +1,214 @@
 dag_type: plain_text
-description: Generated workflow from UI to create a children's novel about a protagonist
-  riding a dragon to the moon and mars.
-name: childrens_novel_riding_dragon_to_moon_and_mars
+description: Each original step is split into two parallel sub‑steps that run concurrently.
+  All downstream steps depend on both halves of their upstream steps, preserving the
+  original workflow logic while adding parallelism.
+name: childrens_novel_riding_dragon_to_moon_and_mars_split_parallel
 nodes:
-  create_protagonist_character_profile:
+  create_protagonist_character_profile_part1:
     agent: false
-    description: Create a comprehensive character profile for the protagonist, highlighting
-      their strengths, weaknesses, and motivations.
-    name: create_protagonist_character_profile
+    description: Draft the protagonist's character traits, strengths, and motivations.
+    name: create_protagonist_character_profile_part1
     nodes_depended_on:
-    - define_story_preconditions
-    nodes_dependent_on:
-    - plan_moon_landing_sequence
-    - plan_mars_detour
+    - define_story_preconditions_part1
+    - define_story_preconditions_part2
+    nodes_dependent_on: []
     prompt: Develop a detailed character profile for the protagonist, including personality
       traits, skills, and emotions.
-  define_story_preconditions:
+  create_protagonist_character_profile_part2:
     agent: false
-    description: 'Define the preconditions for the story: protagonist, dragon, motivation,
-      and setting.'
-    name: define_story_preconditions
+    description: Refine and finalize the protagonist's profile for consistency.
+    name: create_protagonist_character_profile_part2
+    nodes_depended_on:
+    - define_story_preconditions_part1
+    - define_story_preconditions_part2
+    nodes_dependent_on: []
+    prompt: Polish the protagonist's profile, ensuring clarity and completeness.
+  define_story_preconditions_part1:
+    agent: false
+    description: Gather initial story preconditions (protagonist basics, dragon encounter,
+      motivation).
+    name: define_story_preconditions_part1
     nodes_depended_on: []
-    nodes_dependent_on:
-    - create_protagonist_character_profile
-    - design_dragon_character_profile
+    nodes_dependent_on: []
     prompt: What is the protagonist's name, age, and background? How does the protagonist
       meet the dragon? What motivates the protagonist to ride the dragon to the moon
       and mars?
-  design_dragon_character_profile:
+  define_story_preconditions_part2:
     agent: false
-    description: Create a comprehensive character profile for the dragon, highlighting
-      its strengths, weaknesses, and motivations.
-    name: design_dragon_character_profile
+    description: Confirm and format the precondition data for downstream use.
+    name: define_story_preconditions_part2
+    nodes_depended_on: []
+    nodes_dependent_on: []
+    prompt: Summarize the collected preconditions in a concise format ready for later
+      steps.
+  design_dragon_character_profile_part1:
+    agent: false
+    description: Outline the dragon's personality, abilities, and motivations.
+    name: design_dragon_character_profile_part1
     nodes_depended_on:
-    - define_story_preconditions
-    nodes_dependent_on:
-    - plan_moon_landing_sequence
-    - plan_mars_detour
+    - define_story_preconditions_part1
+    - define_story_preconditions_part2
+    nodes_dependent_on: []
     prompt: Develop a detailed character profile for the dragon, including personality
       traits, skills, and habits.
-  develop_plot_twists_and_turns:
+  design_dragon_character_profile_part2:
     agent: false
-    description: Develop plot twists and turns that will keep the reader engaged and
-      invested in the story, highlighting the protagonist's growth and development.
-    name: develop_plot_twists_and_turns
+    description: Validate and format the dragon's profile for downstream steps.
+    name: design_dragon_character_profile_part2
     nodes_depended_on:
-    - plan_moon_landing_sequence
-    - plan_mars_detour
-    nodes_dependent_on:
-    - write_first_draft_of_novel
+    - define_story_preconditions_part1
+    - define_story_preconditions_part2
+    nodes_dependent_on: []
+    prompt: Summarize the dragon's profile in a clear, reusable format.
+  develop_plot_twists_and_turns_part1:
+    agent: false
+    description: Create initial plot twists that challenge the characters.
+    name: develop_plot_twists_and_turns_part1
+    nodes_depended_on:
+    - plan_moon_landing_sequence_part1
+    - plan_moon_landing_sequence_part2
+    - plan_mars_detour_part1
+    - plan_mars_detour_part2
+    nodes_dependent_on: []
     prompt: Introduce plot twists and turns that will challenge the protagonist and
       dragon as they navigate their journey to the moon and mars. Include obstacles,
       conflicts, and turning points.
-  edit_and_refine_novel:
+  develop_plot_twists_and_turns_part2:
     agent: false
-    description: Revise and refine the novel to ensure that it meets the highest standards
-      of quality, engaging the reader and conveying the story effectively.
-    name: edit_and_refine_novel
+    description: Refine and integrate the plot twists with character development.
+    name: develop_plot_twists_and_turns_part2
     nodes_depended_on:
-    - write_first_draft_of_novel
-    nodes_dependent_on:
-    - proofread_and_publish_novel
+    - plan_moon_landing_sequence_part1
+    - plan_moon_landing_sequence_part2
+    - plan_mars_detour_part1
+    - plan_mars_detour_part2
+    nodes_dependent_on: []
+    prompt: Polish the plot twists, ensuring they highlight the protagonist's growth
+      and the dragon's role.
+  edit_and_refine_novel_part1:
+    agent: false
+    description: Perform a first round of edits focusing on structure and narrative.
+    name: edit_and_refine_novel_part1
+    nodes_depended_on:
+    - write_first_draft_of_novel_part1
+    - write_first_draft_of_novel_part2
+    nodes_dependent_on: []
     prompt: Revise and refine the novel to ensure it is engaging, well-paced, and
       free of errors.
-  plan_mars_detour:
+  edit_and_refine_novel_part2:
     agent: false
-    description: Develop a sequence of events that will lead to the protagonist and
-      dragon making a detour to visit mars, highlighting their journey and the consequences
-      of their actions.
-    name: plan_mars_detour
+    description: Apply final polishing touches to the manuscript.
+    name: edit_and_refine_novel_part2
     nodes_depended_on:
-    - create_protagonist_character_profile
-    - design_dragon_character_profile
-    - plan_moon_landing_sequence
-    nodes_dependent_on:
-    - develop_plot_twists_and_turns
+    - write_first_draft_of_novel_part1
+    - write_first_draft_of_novel_part2
+    nodes_dependent_on: []
+    prompt: Conduct a final review for style, tone, and consistency.
+  plan_mars_detour_part1:
+    agent: false
+    description: Draft the events that cause a detour to Mars.
+    name: plan_mars_detour_part1
+    nodes_depended_on:
+    - create_protagonist_character_profile_part1
+    - create_protagonist_character_profile_part2
+    - design_dragon_character_profile_part1
+    - design_dragon_character_profile_part2
+    - plan_moon_landing_sequence_part1
+    - plan_moon_landing_sequence_part2
+    nodes_dependent_on: []
     prompt: Describe the sequence of events that will lead to the protagonist and
       dragon making a detour to visit mars. Include important details such as preparation,
       flight, and martian exploration.
-  plan_moon_landing_sequence:
+  plan_mars_detour_part2:
     agent: false
-    description: Develop a sequence of events that will lead to the protagonist and
-      dragon landing on the moon, highlighting their journey and the consequences
-      of their actions.
-    name: plan_moon_landing_sequence
+    description: Validate and finalise the Mars detour storyline.
+    name: plan_mars_detour_part2
     nodes_depended_on:
-    - create_protagonist_character_profile
-    - design_dragon_character_profile
-    nodes_dependent_on:
-    - develop_plot_twists_and_turns
-    - plan_mars_detour
+    - create_protagonist_character_profile_part1
+    - create_protagonist_character_profile_part2
+    - design_dragon_character_profile_part1
+    - design_dragon_character_profile_part2
+    - plan_moon_landing_sequence_part1
+    - plan_moon_landing_sequence_part2
+    nodes_dependent_on: []
+    prompt: Polish the Mars detour plan, ensuring it fits with the moon landing and
+      character arcs.
+  plan_moon_landing_sequence_part1:
+    agent: false
+    description: Sketch the sequence of events leading to the moon landing.
+    name: plan_moon_landing_sequence_part1
+    nodes_depended_on:
+    - create_protagonist_character_profile_part1
+    - create_protagonist_character_profile_part2
+    - design_dragon_character_profile_part1
+    - design_dragon_character_profile_part2
+    nodes_dependent_on: []
     prompt: Describe the sequence of events that will lead to the protagonist and
       dragon landing on the moon. Include important details such as preparation, flight,
       and lunar exploration.
-  proofread_and_publish_novel:
+  plan_moon_landing_sequence_part2:
     agent: false
-    description: Carefully review the novel for errors and typos, and prepare it for
-      publication, ensuring that it meets the required standards.
-    name: proofread_and_publish_novel
+    description: Refine the moon landing plan and ensure consistency.
+    name: plan_moon_landing_sequence_part2
     nodes_depended_on:
-    - edit_and_refine_novel
+    - create_protagonist_character_profile_part1
+    - create_protagonist_character_profile_part2
+    - design_dragon_character_profile_part1
+    - design_dragon_character_profile_part2
+    nodes_dependent_on: []
+    prompt: Polish the moon landing sequence, confirming timelines and resource needs.
+  proofread_and_publish_novel_part1:
+    agent: false
+    description: Proofread the refined manuscript for typographical errors.
+    name: proofread_and_publish_novel_part1
+    nodes_depended_on:
+    - edit_and_refine_novel_part1
+    - edit_and_refine_novel_part2
     nodes_dependent_on: []
     prompt: Thoroughly proofread the novel for errors and typos, and prepare it for
       publication.
-  write_first_draft_of_novel:
+  proofread_and_publish_novel_part2:
     agent: false
-    description: Use the developed elements to write the first draft of the novel,
-      filling in the gaps and fine-tuning the story.
-    name: write_first_draft_of_novel
+    description: Finalize publishing steps and format the novel for release.
+    name: proofread_and_publish_novel_part2
     nodes_depended_on:
-    - create_protagonist_character_profile
-    - design_dragon_character_profile
-    - plan_moon_landing_sequence
-    - plan_mars_detour
-    - develop_plot_twists_and_turns
-    nodes_dependent_on:
-    - edit_and_refine_novel
+    - edit_and_refine_novel_part1
+    - edit_and_refine_novel_part2
+    nodes_dependent_on: []
+    prompt: Prepare the final manuscript for publishing, including formatting and
+      metadata.
+  write_first_draft_of_novel_part1:
+    agent: false
+    description: Compose the first draft using the gathered elements.
+    name: write_first_draft_of_novel_part1
+    nodes_depended_on:
+    - create_protagonist_character_profile_part1
+    - create_protagonist_character_profile_part2
+    - design_dragon_character_profile_part1
+    - design_dragon_character_profile_part2
+    - plan_moon_landing_sequence_part1
+    - plan_moon_landing_sequence_part2
+    - plan_mars_detour_part1
+    - plan_mars_detour_part2
+    - develop_plot_twists_and_turns_part1
+    - develop_plot_twists_and_turns_part2
+    nodes_dependent_on: []
     prompt: Use the developed characters, sequence of events, and plot twists to write
       the first draft of the novel.
+  write_first_draft_of_novel_part2:
+    agent: false
+    description: Review and improve the first draft for coherence and style.
+    name: write_first_draft_of_novel_part2
+    nodes_depended_on:
+    - create_protagonist_character_profile_part1
+    - create_protagonist_character_profile_part2
+    - design_dragon_character_profile_part1
+    - design_dragon_character_profile_part2
+    - plan_moon_landing_sequence_part1
+    - plan_moon_landing_sequence_part2
+    - plan_mars_detour_part1
+    - plan_mars_detour_part2
+    - develop_plot_twists_and_turns_part1
+    - develop_plot_twists_and_turns_part2
+    nodes_dependent_on: []
+    prompt: Edit the drafted novel to improve flow, pacing, and narrative consistency.
