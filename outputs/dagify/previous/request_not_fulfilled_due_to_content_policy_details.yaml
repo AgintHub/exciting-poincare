@@ -1,5 +1,0 @@
-dag_type: plain_text
-description: The requested workflow cannot be provided as it involves creation of
-  instructions for illegal activity.
-name: request_not_fulfilled_due_to_content_policy
-nodes: {}
