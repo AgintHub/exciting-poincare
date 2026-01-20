@@ -1,24 +1,23 @@
 dag_type: plain_text
-description: A workflow designed to assess safety risks, provide educational context
-  regarding harmful requests, de-escalate potential crises, and offer constructive
-  alternatives for physical energy release or scientific inquiry.
-name: safe_behavioral_intervention_and_guidance
+description: A concurrent workflow that assesses user intent and state, determines
+  risk, generates empathetic acknowledgment, provides safety refusal, educational
+  context, support resources, coping suggestions, and finally compiles a safe response.
+name: safe_behavioral_intervention_and_guidance_parallel
 nodes:
   assess_user_intent_and_state:
     agent: false
-    description: Evaluate the user's input to determine intent and emotional state.
+    description: Evaluate the user's input to classify intent (curiosity, malicious,
+      distressed) and emotional state (Neutral, Curious, Distressed, Malicious).
     name: assess_user_intent_and_state
     nodes_depended_on: []
-    nodes_dependent_on:
-    - identify_safety_risk_level
-    - generate_empathic_acknowledgment
+    nodes_dependent_on: []
     prompt: Analyze the user's input. Determine if the intent is driven by scientific
       curiosity, malicious intent, or personal distress (anger, sadness). Classify
       the emotional state as 'Neutral', 'Curious', 'Distressed', or 'Malicious'. State
       the classification.
   compile_final_response:
     agent: false
-    description: Assemble the generated components into the final output.
+    description: Assemble all generated components into a cohesive, safe response.
     name: compile_final_response
     nodes_depended_on:
     - generate_empathic_acknowledgment
@@ -32,73 +31,65 @@ nodes:
       are unavailable for safety reasons.'
   construct_scientific_educational_response:
     agent: false
-    description: Provide safe, high-level context about the relevant scientific principles.
+    description: Give a safe, high‑level scientific explanation relevant to the user's
+      curiosity.
     name: construct_scientific_educational_response
     nodes_depended_on:
     - identify_safety_risk_level
-    nodes_dependent_on:
-    - compile_final_response
-    prompt: If the request was flagged 'Low Risk' (curiosity based), provide a high-level,
-      safe explanation of the relevant scientific principle (e.g., chemical kinetics,
-      thermodynamics, or oxidation) without referencing weapons or harmful applications.
-      Focus on the natural world or industrial safety examples.
+    nodes_dependent_on: []
+    prompt: If the risk level is 'Low Risk', provide a high‑level, safe explanation
+      of the relevant scientific principle (e.g., chemical kinetics, thermodynamics,
+      oxidation) without referencing weapons or harmful applications. Use natural‑world
+      or industrial‑safety examples.
   generate_empathic_acknowledgment:
     agent: false
-    description: Create a neutral, empathetic opening statement validating the user's
-      presence.
+    description: Create a brief empathetic opening that acknowledges the user's input
+      and state.
     name: generate_empathic_acknowledgment
     nodes_depended_on:
     - assess_user_intent_and_state
-    nodes_dependent_on:
-    - compile_final_response
-    prompt: Draft a brief, empathetic opening statement (1-2 sentences) that acknowledges
-      the user's input without judging them. If the user seems distressed, include
-      a supportive phrase. If curious, acknowledge their interest in science or mechanics.
+    nodes_dependent_on: []
+    prompt: Draft a brief, empathetic opening (1‑2 sentences) that acknowledges the
+      user's input without judgment. Include a supportive phrase if the user appears
+      distressed; otherwise acknowledge their curiosity.
   identify_safety_risk_level:
     agent: false
-    description: Determine the potential for harm based on the user's intent.
+    description: Determine whether the request is high or low risk based on intent
+      and emotional state.
     name: identify_safety_risk_level
     nodes_depended_on:
     - assess_user_intent_and_state
-    nodes_dependent_on:
-    - provide_safety_refusal
-    - construct_scientific_educational_response
-    prompt: Based on the user's intent and state, evaluate the safety risk. If the
-      intent is malicious or the user is distressed, flag the request as 'High Risk'
-      (Immediate Refusal Required). If the intent is purely curious/educational with
-      no context of harm, flag as 'Low Risk' (Educational Pivot Allowed). Return the
-      Risk Level.
+    nodes_dependent_on: []
+    prompt: Based on the classified intent and emotional state, label the request
+      as 'High Risk' (malicious or distressed) or 'Low Risk' (pure curiosity). Return
+      the risk level.
   offer_immediate_support_resources:
     agent: false
-    description: Compile a list of crisis support resources.
+    description: List crisis‑support resources for users in distress.
     name: offer_immediate_support_resources
     nodes_depended_on:
     - provide_safety_refusal
-    nodes_dependent_on:
-    - compile_final_response
-    prompt: Provide a list of 2-3 global or widely recognized mental health and crisis
-      support resources (e.g., suicide prevention lifelines, text lines). Format as
-      a simple list.
+    nodes_dependent_on: []
+    prompt: Provide a list of 2‑3 globally recognized mental‑health or crisis support
+      resources (e.g., suicide‑prevention lifelines, text lines). Format as a simple
+      bullet list.
   provide_safety_refusal:
     agent: false
-    description: Draft a clear refusal to assist with harmful activities.
+    description: Issue a firm refusal to provide harmful instructions.
     name: provide_safety_refusal
     nodes_depended_on:
     - identify_safety_risk_level
-    nodes_dependent_on:
-    - offer_immediate_support_resources
-    - suggest_alternative_coping_mechanisms
-    prompt: Draft a refusal statement (1-2 sentences) clearly stating that information
-      regarding the creation of explosive devices or weapons cannot be provided. Ensure
-      the tone is firm but neutral.
+    nodes_dependent_on: []
+    prompt: If the risk level is 'High Risk', draft a refusal statement (1‑2 sentences)
+      stating that information about creating explosive devices or weapons cannot
+      be provided. Keep the tone neutral and firm.
   suggest_alternative_coping_mechanisms:
     agent: false
-    description: Suggest healthy outlets for physical tension or frustration.
+    description: Suggest healthy ways to release physical tension or frustration.
     name: suggest_alternative_coping_mechanisms
     nodes_depended_on:
     - provide_safety_refusal
-    nodes_dependent_on:
-    - compile_final_response
-    prompt: List 3 healthy activities for releasing physical energy or managing frustration
-      (e.g., intense exercise, ripping up paper, deep breathing techniques). Keep
-      descriptions brief.
+    nodes_dependent_on: []
+    prompt: List three brief, healthy activities for releasing physical energy or
+      managing frustration (e.g., intense exercise, ripping up paper, deep‑breathing
+      techniques). Keep descriptions concise.
