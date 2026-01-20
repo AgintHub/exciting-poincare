@@ -1,6 +1,5 @@
-dag_type: plain_text
-description: A detailed, state‑of‑the‑art workflow to design, back‑test, and launch
-  a market‑neutral equity quantitative trading strategy for a hedge fund.
+dag_type: typed
+description: Generated workflow from UI.
 name: quantitative_market_neutral_equity_strategy
 nodes:
   acquire_alternative_data:
@@ -11,6 +10,25 @@ nodes:
     - identify_data_sources
     - define_universe_criteria
     nodes_dependent_on: []
+    output_structure:
+    - description: List of security identifiers (e.g., ticker symbols or ISINs) for
+        which data was retrieved.
+      key: security_ids
+      type: List[str]
+    - description: List of dates (YYYY-MM-DD) for which alternative data was downloaded.
+      key: retrieval_dates
+      type: List[str]
+    - description: List of data provider names used for the alternative data download.
+      key: data_sources
+      type: List[str]
+    - description: List of alternative data fields retrieved (e.g., news_sentiment,
+        google_trends, esg_score, analyst_forecast).
+      key: data_fields
+      type: List[str]
+    - description: Brief statement summarizing the acquisition, including coverage
+        period, number of securities, and total data points.
+      key: summary_statement
+      type: str
     prompt: Obtain daily alternative data series (e.g., news sentiment scores, Google
       Trends, ESG scores, analyst forecasts) for each screened security from the listed
       sources, covering the past 10 years. Summarize the acquisition with a brief
@@ -23,6 +41,21 @@ nodes:
     - identify_data_sources
     - define_universe_criteria
     nodes_dependent_on: []
+    output_structure:
+    - description: List of fundamental data fields retrieved (e.g., earnings per share,
+        book value, cash flow, leverage, dividend yield)
+      key: fundamental_data_fields
+      type: List[str]
+    - description: Statement describing the coverage of the retrieved data (e.g.,
+        10-year horizon, quarterly and annual data)
+      key: data_coverage
+      type: str
+    - description: Number of securities for which fundamental data was retrieved
+      key: number_of_securities
+      type: int
+    - description: Whether the fundamental data retrieval was successful
+      key: data_retrieval_status
+      type: bool
     prompt: From the identified fundamental data providers, collect quarterly and
       annual fundamentals (e.g., earnings per share, book value, cash flow, leverage,
       dividend yield) for each screened security over the same 10‑year horizon. Summarize
@@ -35,6 +68,28 @@ nodes:
     - identify_data_sources
     - define_universe_criteria
     nodes_dependent_on: []
+    output_structure:
+    - description: Earliest date of the price data series (YYYY-MM-DD).
+      key: start_date
+      type: str
+    - description: Most recent date of the price data series (YYYY-MM-DD).
+      key: end_date
+      type: str
+    - description: Total number of securities for which price data was retrieved.
+      key: num_securities
+      type: int
+    - description: List of unique identifiers (e.g., ticker or CUSIP) for each security
+        in the dataset.
+      key: security_ids
+      type: List[str]
+    - description: List of column names that were retrieved (e.g., adjusted_close,
+        open, high, low, volume, split_factor).
+      key: columns_retrieved
+      type: List[str]
+    - description: A concise statement confirming the date range and number of securities,
+        e.g., "Downloaded price data for 1,234 securities from 2013-01-02 to 2023-01-02."
+      key: summary_statement
+      type: str
     prompt: Using the data source list from the previous step, retrieve daily adjusted
       close, open, high, low, volume, and corporate actions for all securities that
       satisfy the universe criteria, covering the past 10 years. Summarize the data
@@ -49,6 +104,19 @@ nodes:
     - acquire_price_data
     - define_transaction_cost_model
     nodes_dependent_on: []
+    output_structure:
+    - description: Time-series of portfolio daily returns
+      key: portfolio_daily_returns
+      type: List[float]
+    - description: Time-series of cumulative P&L
+      key: cumulative_pnl
+      type: List[float]
+    - description: Time-series of portfolio turnover
+      key: turnover
+      type: List[float]
+    - description: Length of the back-test horizon in days
+      key: backtest_horizon_length
+      type: int
     prompt: Run a full historical back‑test from the earliest date to the most recent,
       applying the daily optimized weights, subtracting transaction costs as defined,
       and rebalancing daily. Output the time‑series of portfolio daily returns, cumulative
@@ -60,6 +128,22 @@ nodes:
     nodes_depended_on:
     - acquire_alternative_data
     nodes_dependent_on: []
+    output_structure:
+    - description: Total number of alternative data records downloaded before cleaning.
+      key: total_records
+      type: int
+    - description: Total number of missing days that were filled during the cleaning
+        process.
+      key: filled_missing_days
+      type: int
+    - description: Number of records excluded due to being outside the 1%/99% percentile
+        after winsorization.
+      key: excluded_records
+      type: int
+    - description: A brief textual summary of the cleaning outcome, including date
+        range and number of securities processed.
+      key: summary_statement
+      type: str
     prompt: 'Process the alternative data: align timestamps to trading days, fill
       missing days using forward fill or linear interpolation, winsorize extreme values
       at the 1%/99% percentile, and document any excluded records.'
@@ -71,6 +155,25 @@ nodes:
     nodes_depended_on:
     - acquire_fundamental_data
     nodes_dependent_on: []
+    output_structure:
+    - description: Total number of fundamental records after cleaning
+      key: cleaned_record_count
+      type: int
+    - description: Number of records that had missing values before imputation
+      key: missing_value_records
+      type: int
+    - description: Whether any records were flagged for missing values after cleaning
+      key: missing_value_flagged
+      type: bool
+    - description: Number of records removed due to outlier detection
+      key: outlier_removed_count
+      type: int
+    - description: True if all metrics were converted to consistent units
+      key: unit_consistency_flag
+      type: bool
+    - description: True if all reporting periods were aligned to calendar dates
+      key: reporting_period_aligned
+      type: bool
     prompt: 'Clean the fundamental dataset: convert all metrics to consistent units,
       align reporting periods to calendar dates, interpolate or flag missing values,
       and remove outliers beyond 5 standard deviations. Summarize the cleaning actions.'
@@ -82,6 +185,23 @@ nodes:
     nodes_depended_on:
     - acquire_price_data
     nodes_dependent_on: []
+    output_structure:
+    - description: Total number of rows after cleaning
+      key: cleaned_rows
+      type: int
+    - description: Number of rows removed due to invalid or duplicate data
+      key: removed_rows
+      type: int
+    - description: Date range of the cleaned dataset in ISO format (e.g., 2013-01-02
+        to 2023-01-01)
+      key: cleaned_date_range
+      type: str
+    - description: List of column names that were standardized or renamed
+      key: columns_cleaned
+      type: List[str]
+    - description: Indicates whether the dataset passed all integrity checks
+      key: is_clean
+      type: bool
     prompt: 'Perform data cleaning on the price dataset: adjust for splits and dividends,
       align dates, forward‑fill or drop missing observations, and ensure consistent
       column names. Provide a short report indicating the number of rows cleaned and
@@ -95,6 +215,22 @@ nodes:
     - merge_cleaned_data
     - define_factor_candidates
     nodes_dependent_on: []
+    output_structure:
+    - description: List of all factor names computed for each security‑day
+      key: factor_names
+      type: List[str]
+    - description: For each factor, a brief description of the calculation method
+        (e.g., ratio, ranking)
+      key: factor_calculation_descriptions
+      type: List[str]
+    - description: 'Text representation of the table schema for the factor columns
+        (e.g., "factor_name: float, calculation: str")'
+      key: factor_column_schema
+      type: str
+    - description: Total number of factor columns generated across all securities
+        and dates
+      key: total_factor_columns
+      type: int
     prompt: Using the merged data, compute the numerical exposure of each security
       on each date for all candidate factors. For each factor, describe the calculation
       (e.g., ratio, ranking) and output a table schema listing factor columns. Summarize
@@ -106,6 +242,13 @@ nodes:
     nodes_depended_on:
     - define_strategy_objectives
     nodes_dependent_on: []
+    output_structure:
+    - description: A list of candidate factor names to be evaluated.
+      key: factor_names
+      type: List[str]
+    - description: A short definition or description for each corresponding factor.
+      key: factor_definitions
+      type: List[str]
     prompt: Generate a list of candidate factors (both classic and innovative) to
       be tested, such as value (e.g., Book‑to‑Price), momentum (12‑month return),
       quality (ROE), low‑volatility, earnings revision, sentiment, ESG, and any composite
@@ -117,6 +260,16 @@ nodes:
     name: define_market_neutral_objectives
     nodes_depended_on: []
     nodes_dependent_on: []
+    output_structure:
+    - description: List of individual market‑neutral criteria expressed as bullet
+        points, e.g., "Beta exposure = 0", "Dollar exposure = 0", "Sector neutrality",
+        "Factor X neutrality".
+      key: neutrality_criteria
+      type: List[str]
+    - description: Indicates whether the defined criteria meet the strategy's overall
+        neutrality requirements.
+      key: is_valid
+      type: bool
     prompt: Provide a detailed definition of market‑neutral objectives for the strategy,
       including required beta exposure (e.g., zero beta to a market index), dollar
       neutrality, sector neutrality, and any other factor neutrality requirements.
@@ -128,6 +281,12 @@ nodes:
     name: define_strategy_objectives
     nodes_depended_on: []
     nodes_dependent_on: []
+    output_structure:
+    - description: A list of up to six bullet‑point objectives describing target return,
+        risk tolerance, market exposure, investment horizon, and special constraints
+        for the strategy.
+      key: objectives
+      type: List[str]
     prompt: Write a concise list (max 6 bullet points) of the primary objectives for
       a market‑neutral equity quantitative trading strategy, covering target return,
       risk tolerance, market exposure, investment horizon, and any special constraints.
@@ -139,6 +298,17 @@ nodes:
     nodes_depended_on:
     - acquire_price_data
     nodes_dependent_on: []
+    output_structure:
+    - description: Fixed commission charged per share traded
+      key: commission_per_share
+      type: float
+    - description: Bid‑ask spread expressed as a percentage of the security price
+      key: bid_ask_spread_percent
+      type: float
+    - description: Parameter for the square‑root market impact function (trade size
+        relative to daily volume)
+      key: impact_factor
+      type: float
     prompt: Create a transaction cost model that includes fixed commission per share,
       bid‑ask spread as a function of average daily volume, and market impact modeled
       as a square‑root function of trade size relative to daily volume. Provide the
@@ -151,6 +321,28 @@ nodes:
     name: define_universe_criteria
     nodes_depended_on: []
     nodes_dependent_on: []
+    output_structure:
+    - description: Minimum market capitalization in USD (e.g., 5000000000 for $5B)
+      key: market_cap_min
+      type: float
+    - description: Maximum market capitalization in USD (e.g., 100000000000 for $100B)
+      key: market_cap_max
+      type: float
+    - description: Minimum average daily trading volume in shares (e.g., 5000000)
+      key: avg_daily_volume_min
+      type: float
+    - description: Minimum stock price in USD (e.g., 5.0)
+      key: price_min
+      type: float
+    - description: Maximum stock price in USD (e.g., 150.0)
+      key: price_max
+      type: float
+    - description: List of allowed listing exchanges (e.g., ['NYSE', 'NASDAQ'])
+      key: exchanges
+      type: List[str]
+    - description: Whether to filter for securities with positive earnings
+      key: positive_earnings
+      type: bool
     prompt: Create a list of filtering rules (as bullet points) that specify the equity
       universe for the strategy. Include market‑cap minimum/maximum, liquidity (average
       daily volume), price range, listing exchange, and any fundamental screens (e.g.,
@@ -164,6 +356,23 @@ nodes:
     - final_review_and_approval
     - outline_technology_stack
     nodes_dependent_on: []
+    output_structure:
+    - description: Names of the deployment phases (e.g., Phase 1, Phase 2, Phase 3)
+      key: phase_names
+      type: List[str]
+    - description: Number of weeks allocated for each phase
+      key: phase_weeks
+      type: List[int]
+    - description: Key milestones for each phase, separated by commas or line breaks
+      key: phase_milestones
+      type: List[str]
+    - description: Primary responsible owner or team for each phase
+      key: phase_owners
+      type: List[str]
+    - description: A markdown‑style table summarizing phases, weeks, milestones, and
+        owners
+      key: summary_table
+      type: str
     prompt: 'Provide a phased deployment roadmap (Phase 1: sandbox testing, Phase 2:
       pilot with limited capital, Phase 3: full launch) with timeline (weeks), key
       milestones, and responsible owners for each phase. Summarize in a table.'
@@ -176,6 +385,34 @@ nodes:
     - optimize_portfolio
     - define_market_neutral_objectives
     nodes_dependent_on: []
+    output_structure:
+    - description: Name of the execution algorithm (e.g., VWAP, TWAP, Implementation
+        Shortfall)
+      key: algorithm_name
+      type: str
+    - description: Broad classification of the strategy (e.g., Market‑Milking, Time‑Weighted,
+        Volume‑Weighted)
+      key: strategy_type
+      type: str
+    - description: Maximum percentage of the daily trading volume to participate in
+        for any single security
+      key: participation_rate
+      type: float
+    - description: Time interval in minutes between successive child order slices
+      key: slice_frequency_minutes
+      type: int
+    - description: Sequence of target weights to be applied in each child order slice,
+        matching the order_time_stamps list
+      key: child_order_weights
+      type: List[float]
+    - description: ISO 8601 timestamps indicating when each child order slice is scheduled
+        to be sent
+      key: order_time_stamps
+      type: List[str]
+    - description: Key metric used to assess execution quality (e.g., VWAP deviation
+        %, Execution Slippage %)
+      key: execution_quality_metric
+      type: str
     prompt: Describe an execution algorithm (e.g., volume‑weighted average price (VWAP)
       with participation rate limits) that will translate the daily target weights
       into child orders. Include parameters such as participation rate, order slicing
@@ -189,6 +426,31 @@ nodes:
     - define_market_neutral_objectives
     - define_universe_criteria
     nodes_dependent_on: []
+    output_structure:
+    - description: Target value for net market beta (should be 0.0 for neutrality)
+      key: net_beta_target
+      type: float
+    - description: Target net dollar exposure (should be 0.0 for dollar neutrality)
+      key: dollar_exposure_target
+      type: float
+    - description: Flag indicating whether sector exposure is required to be neutralized
+      key: sector_neutrality
+      type: bool
+    - description: Maximum allowed position size as a percentage of NAV (e.g., 0.05
+        for 5%)
+      key: max_position_size_pct
+      type: float
+    - description: Minimum required liquidity as a percentage of average daily volume
+        (e.g., 0.02 for 2%)
+      key: min_liquidity_pct
+      type: float
+    - description: List of factor names for which exposure limits are specified
+      key: factor_names
+      type: List[str]
+    - description: Corresponding upper bound on absolute exposure for each factor
+        in factor_names
+      key: factor_exposure_limits
+      type: List[float]
     prompt: 'List the portfolio constraints as mathematical statements: (i) Net market
       beta = 0, (ii) Dollar exposure = 0, (iii) Sector exposure neutralized, (iv)
       Max position size = X% of NAV, (v) Minimum liquidity threshold = Y% average
@@ -203,6 +465,24 @@ nodes:
     - design_portfolio_constraints
     - define_market_neutral_objectives
     nodes_dependent_on: []
+    output_structure:
+    - description: Names of each compliance rule (e.g., Position Limit, Sector Concentration,
+        Short‑Selling Restriction, Leverage Cap, Reporting Obligation).
+      key: compliance_rule_names
+      type: List[str]
+    - description: Numeric threshold for each rule (e.g., 5% for position limit, 10%
+        for sector concentration, 0 for short selling, 1.5 for leverage cap, 0 for
+        reporting obligation).
+      key: threshold_values
+      type: List[float]
+    - description: Method used to verify compliance (e.g., "Portfolio value check",
+        "Sector exposure calculation", "Short sale flag", "Leverage ratio calculation",
+        "Compliance report upload check").
+      key: verification_methods
+      type: List[str]
+    - description: Boolean flag indicating whether each rule is currently satisfied.
+      key: is_compliance_met
+      type: List[bool]
     prompt: Produce a compliance checklist covering position limits, sector concentration,
       short‑selling restrictions, leverage caps, and reporting obligations. For each
       rule, specify the quantitative threshold and the verification method.
@@ -215,6 +495,19 @@ nodes:
     - design_execution_strategy
     - develop_compliance_checks
     nodes_dependent_on: []
+    output_structure:
+    - description: Ordered list of step numbers in the workflow
+      key: step_numbers
+      type: List[int]
+    - description: Textual description of each workflow step
+      key: step_descriptions
+      type: List[str]
+    - description: Name of the system or team responsible for each step
+      key: step_responsible
+      type: List[str]
+    - description: Concise summary of the overall operational workflow
+      key: workflow_summary
+      type: str
     prompt: 'Create a flowchart description (as a numbered list) that outlines the
       daily operational workflow: (1) Data pull, (2) Data cleaning, (3) Factor computation,
       (4) Signal generation, (5) Portfolio optimization, (6) Compliance check, (7)
@@ -227,6 +520,28 @@ nodes:
     nodes_depended_on:
     - backtest_portfolio
     nodes_dependent_on: []
+    output_structure:
+    - description: The annualized return of the backtest
+      key: annualized_return
+      type: float
+    - description: The annualized volatility of the backtest
+      key: annualized_volatility
+      type: float
+    - description: The Sharpe ratio of the backtest
+      key: sharpe_ratio
+      type: float
+    - description: The information ratio of the backtest
+      key: information_ratio
+      type: float
+    - description: The maximum drawdown of the backtest
+      key: maximum_drawdown
+      type: float
+    - description: The turnover of the backtest
+      key: turnover
+      type: float
+    - description: List of periods where the backtest underperformed
+      key: underperformance_periods
+      type: List[str]
     prompt: Compute annualized return, annualized volatility, Sharpe ratio, information
       ratio, maximum drawdown, and turnover for the back‑test period. Present the
       metrics in a concise table and highlight any periods of underperformance.
@@ -240,6 +555,28 @@ nodes:
     - train_random_forest_model
     - train_gradient_boosting_model
     nodes_dependent_on: []
+    output_structure:
+    - description: The name of the model evaluated (e.g., LinearRegression, RandomForest,
+        GradientBoosting).
+      key: model_name
+      type: str
+    - description: Number of years used for the out‑of‑sample testing period.
+      key: holdout_period_years
+      type: int
+    - description: Annualized return of the model’s strategy during the holdout period.
+      key: annualized_return
+      type: float
+    - description: Annualized Sharpe ratio of the model’s strategy during the holdout
+        period.
+      key: annualized_sharpe
+      type: float
+    - description: Maximum drawdown (as a negative decimal) of the model’s strategy
+        during the holdout period.
+      key: maximum_drawdown
+      type: float
+    - description: Information ratio of the model’s strategy during the holdout period.
+      key: information_ratio
+      type: float
     prompt: Perform a rolling‑window out‑of‑sample evaluation (e.g., 2‑year training,
       1‑year testing) for each model. For each model, compute annualized return, Sharpe,
       maximum drawdown, and information ratio. Summarize the results in a comparative
@@ -251,6 +588,21 @@ nodes:
     nodes_depended_on:
     - prepare_strategy_documentation
     nodes_dependent_on: []
+    output_structure:
+    - description: List of review items (e.g., methodology soundness, risk limits,
+        compliance coverage, technology readiness, governance).
+      key: checklist_items
+      type: List[str]
+    - description: Corresponding status for each checklist item (Approved or Needs
+        Revision).
+      key: checklist_statuses
+      type: List[str]
+    - description: Name of the senior manager signing off the review.
+      key: sign_off_name
+      type: str
+    - description: Date of the sign‑off (ISO 8601 format).
+      key: sign_off_date
+      type: str
     prompt: 'Create a review checklist (items: methodology soundness, risk limits,
       compliance coverage, technology readiness, governance). Indicate a status (Approved/Needs
       Revision) for each item, and sign‑off by a fictitious senior manager (name and
@@ -264,6 +616,24 @@ nodes:
     - select_best_model
     - compute_factor_exposures
     nodes_dependent_on: []
+    output_structure:
+    - description: The first date for which signals were generated, in ISO format
+        (YYYY-MM-DD).
+      key: date_range_start
+      type: str
+    - description: The last date for which signals were generated, in ISO format (YYYY-MM-DD).
+      key: date_range_end
+      type: str
+    - description: Total number of signal entries generated across all securities
+        and dates.
+      key: num_signals
+      type: int
+    - description: Mean of all predicted excess return signals.
+      key: signal_mean
+      type: float
+    - description: Standard deviation of all predicted excess return signals.
+      key: signal_std
+      type: float
     prompt: Apply the selected model to the latest factor exposures to generate a
       predicted excess return for every security on each trading day in the dataset.
       Output a time‑series of signal values (one column per date). Provide a brief
@@ -275,6 +645,28 @@ nodes:
     name: identify_data_sources
     nodes_depended_on: []
     nodes_dependent_on: []
+    output_structure:
+    - description: List of provider names for market price data
+      key: market_price_data_sources
+      type: List[str]
+    - description: Comma-separated list of data fields to retrieve from market price
+        providers
+      key: market_price_fields
+      type: List[str]
+    - description: List of provider names for fundamental financial data
+      key: fundamental_data_sources
+      type: List[str]
+    - description: Comma-separated list of data fields to retrieve from fundamental
+        providers
+      key: fundamental_fields
+      type: List[str]
+    - description: List of provider names for alternative data
+      key: alternative_data_sources
+      type: List[str]
+    - description: Comma-separated list of data fields to retrieve from alternative
+        data providers
+      key: alternative_fields
+      type: List[str]
     prompt: 'Enumerate the data sources required to feed the strategy, separating
       them into three categories: market price data, fundamental financial data, and
       alternative data (e.g., sentiment, ESG). For each source, give the provider
@@ -288,6 +680,31 @@ nodes:
     - deployment_plan
     - setup_monitoring_and_alerts
     nodes_dependent_on: []
+    output_structure:
+    - description: Whether the strategy has been successfully launched
+      key: launch_status
+      type: bool
+    - description: Date of launch
+      key: launch_date
+      type: str
+    - description: List of pre-launch items that have been confirmed as complete
+      key: pre_launch_items
+      type: List[str]
+    - description: Status of infrastructure (e.g., 'ready', 'not ready')
+      key: infrastructure_status
+      type: str
+    - description: Status of data feeds (e.g., 'connected', 'not connected')
+      key: data_feeds_status
+      type: str
+    - description: Whether compliance sign-off has been obtained
+      key: compliance_sign_off
+      type: bool
+    - description: Risk limits that have been set
+      key: risk_limits
+      type: str
+    - description: Status of monitoring (e.g., 'active', 'inactive')
+      key: monitoring_status
+      type: str
     prompt: Write a concise launch checklist confirming completion of all pre‑launch
       items (infrastructure, data feeds, compliance sign‑off, risk limits set, monitoring
       active). State that the strategy is now live as of the current date.
@@ -301,6 +718,24 @@ nodes:
     - clean_fundamental_data
     - clean_alternative_data
     nodes_dependent_on: []
+    output_structure:
+    - description: Total number of security‑day observations in the merged dataset.
+      key: total_rows
+      type: int
+    - description: Total number of columns (features) in the merged dataset, including
+        identifier, date, price, fundamental, and alternative fields.
+      key: total_columns
+      type: int
+    - description: List of all column names present in the merged dataset.
+      key: column_names
+      type: List[str]
+    - description: Flag indicating whether the merge operation completed without errors.
+      key: is_successful
+      type: bool
+    - description: Short textual summary of the merge operation, e.g., "Merged 5,000
+        securities over 2,500 trading days with 120 columns."
+      key: merge_summary
+      type: str
     prompt: Join the three cleaned datasets on security identifier and date to produce
       a unified data frame containing price, fundamental, and alternative fields for
       each security‑day. Confirm the final dataset dimensions (rows, columns).
@@ -314,6 +749,22 @@ nodes:
     - design_portfolio_constraints
     - define_transaction_cost_model
     nodes_dependent_on: []
+    output_structure:
+    - description: The date for which the optimal weights are computed
+      key: optimal_date
+      type: str
+    - description: Optimal portfolio weights for each security in the universe, ordered
+        consistently with the input signal vector
+      key: weight_vector
+      type: List[float]
+    - description: Sum of absolute values of the optimal weights, representing total
+        gross position size
+      key: gross_exposure
+      type: float
+    - description: Sum of the optimal weights, representing net dollar exposure after
+        market‑neutral constraints
+      key: net_exposure
+      type: float
     prompt: 'Formulate and solve a quadratic programming problem: maximize the dot
       product of signal vector and weight vector minus transaction cost penalty, subject
       to the constraints defined earlier. Report the optimal weight vector for a sample
@@ -328,10 +779,22 @@ nodes:
     - design_execution_strategy
     - develop_compliance_checks
     nodes_dependent_on: []
+    output_structure:
+    - description: Ordered list of pipeline stages (e.g., Data Ingestion, Model Training,
+        Optimization, Execution, Monitoring).
+      key: stages
+      type: List[str]
+    - description: Corresponding list of technology components or tools for each stage,
+        aligned with the stages list.
+      key: technologies
+      type: List[str]
+    - description: Human‑readable two‑column table representation of stages and technologies.
+      key: table_summary
+      type: str
     prompt: 'List the technology components for each stage: data ingestion (e.g.,
       cloud storage, ETL), model training (e.g., Python, Jupyter, GPU), optimization
       (e.g., CVXOPT, Gurobi), execution (e.g., FIX gateway, OMS), monitoring (e.g.,
-      Grafana, alerts). Present as a two‑column table: Stage | Technology.'
+      Grafana, alerts). Present as a two-column table: Stage | Technology.'
   prepare_strategy_documentation:
     agent: false
     description: Compile a comprehensive strategy memorandum covering methodology,
@@ -344,6 +807,40 @@ nodes:
     - draft_operational_workflow
     - design_execution_strategy
     nodes_dependent_on: []
+    output_structure:
+    - description: Bullet list of the strategy’s high‑level objectives.
+      key: objectives
+      type: List[str]
+    - description: Textual description of the equity universe selection criteria.
+      key: universe_description
+      type: str
+    - description: List of data providers and the key data fields retrieved.
+      key: data_sources
+      type: str
+    - description: Explanation of the factor construction and selection process.
+      key: factor_model
+      type: str
+    - description: Description of how signals are generated from factor exposures.
+      key: signal_generation
+      type: str
+    - description: Summary of the optimization approach and constraints applied.
+      key: portfolio_construction
+      type: str
+    - description: Outline of risk metrics, monitoring, and mitigation strategies.
+      key: risk_management
+      type: str
+    - description: Details of the algorithmic execution method and parameters.
+      key: execution_strategy
+      type: str
+    - description: Compliance checklist and regulatory requirements.
+      key: compliance
+      type: str
+    - description: Key technology components used across the pipeline.
+      key: technology_stack
+      type: str
+    - description: Table of back‑test performance metrics and key observations.
+      key: performance_summary
+      type: str
     prompt: 'Write a strategy memorandum that includes sections: Objectives, Universe,
       Data Sources, Factor Model, Signal Generation, Portfolio Construction, Risk
       Management, Execution, Compliance, Technology, Performance Summary (with back‑test
@@ -358,6 +855,32 @@ nodes:
     - optimize_portfolio
     - compute_factor_exposures
     nodes_dependent_on: []
+    output_structure:
+    - description: Names of the selected factors evaluated.
+      key: factor_names
+      type: List[str]
+    - description: Average portfolio exposure to each factor over the back‑test period.
+      key: average_exposure
+      type: List[float]
+    - description: Maximum observed portfolio drawdown during the back‑test.
+      key: max_drawdown
+      type: float
+    - description: Factors identified as the largest contributors to the maximum drawdown.
+      key: top_drawdown_contributors
+      type: List[str]
+    - description: Estimated change in portfolio return per unit change in each factor
+        during the drawdown period.
+      key: drawdown_sensitivity
+      type: List[float]
+    - description: Names of factors used in the ±2σ stress test.
+      key: stress_factor_names
+      type: List[str]
+    - description: Portfolio return sensitivity when each factor is shocked +2σ.
+      key: stress_sensitivity_positive
+      type: List[float]
+    - description: Portfolio return sensitivity when each factor is shocked -2σ.
+      key: stress_sensitivity_negative
+      type: List[float]
     prompt: Using the back‑test data, compute the average exposure of the portfolio
       to each selected factor, identify the top contributors to drawdown, and perform
       a stress test by shocking each factor by ±2 standard deviations. Summarize the
@@ -369,6 +892,22 @@ nodes:
     nodes_depended_on:
     - evaluate_models
     nodes_dependent_on: []
+    output_structure:
+    - description: Name of the model selected as best performer
+      key: selected_model
+      type: str
+    - description: Information ratio of the selected model
+      key: information_ratio
+      type: float
+    - description: Sharpe ratio of the selected model
+      key: sharpe_ratio
+      type: float
+    - description: Annualized return of the selected model
+      key: annualized_return
+      type: float
+    - description: Maximum drawdown observed for the selected model
+      key: maximum_drawdown
+      type: float
     prompt: From the evaluation table, choose the model with the highest information
       ratio (or Sharpe if preferred). State the model name and its key performance
       numbers.
@@ -379,6 +918,18 @@ nodes:
     nodes_depended_on:
     - test_factor_performance
     nodes_dependent_on: []
+    output_structure:
+    - description: Names of factors that met the significance criteria (p-value <
+        0.05 and positive average t-statistic). Each name represents one factor.
+      key: selected_factors
+      type: List[str]
+    - description: Total number of factors that passed the significance thresholds.
+      key: significant_factor_count
+      type: int
+    - description: Indicates whether the selection process completed without errors
+        and produced at least one significant factor.
+      key: is_valid_selection
+      type: bool
     prompt: From the factor performance table, select all factors with p‑value < 0.05
       and positive average t‑statistic. List the selected factor names as bullet points
       and note the total count.
@@ -390,6 +941,21 @@ nodes:
     nodes_depended_on:
     - draft_operational_workflow
     nodes_dependent_on: []
+    output_structure:
+    - description: Names of the live monitoring metrics to be tracked
+      key: metric_names
+      type: List[str]
+    - description: Numerical alert thresholds corresponding to each metric, expressed
+        in the metric’s units or standard deviations
+      key: threshold_values
+      type: List[float]
+    - description: Cadence for each metric (e.g., "real‑time", "hourly", "daily")
+      key: monitoring_cadence
+      type: List[str]
+    - description: Channels to be used for alert delivery (e.g., "email", "Slack",
+        "PagerDuty")
+      key: notification_channels
+      type: List[str]
     prompt: List the key live‑monitoring metrics (e.g., P&L deviation, exposure limits
       breached, latency, execution slippage) and set quantitative alert thresholds
       (e.g., P&L > 2 σ deviation). Provide the monitoring cadence (real‑time vs daily)
@@ -402,6 +968,23 @@ nodes:
     nodes_depended_on:
     - compute_factor_exposures
     nodes_dependent_on: []
+    output_structure:
+    - description: List of factor names evaluated
+      key: factor_names
+      type: List[str]
+    - description: Average t‑statistic from cross‑sectional regressions for each factor
+      key: avg_t_stats
+      type: List[float]
+    - description: Annualized Sharpe ratio derived from factor regression predictive
+        power
+      key: annualized_sharpe
+      type: List[float]
+    - description: P‑value of the factor coefficient in the regression
+      key: p_values
+      type: List[float]
+    - description: True if p‑value < 0.05, indicating statistical significance
+      key: is_significant
+      type: List[bool]
     prompt: 'Run cross‑sectional regressions of next‑day stock returns on each factor
       individually and record the average t‑statistic, annualized Sharpe, and p‑value.
       Present the results in a table with columns: Factor, Avg t‑Stat, Annualized
@@ -416,6 +999,19 @@ nodes:
     - select_significant_factors
     - merge_cleaned_data
     nodes_dependent_on: []
+    output_structure:
+    - description: Name of the trained model (e.g., XGBoost_GBM).
+      key: model_name
+      type: str
+    - description: Root Mean Squared Error on the validation set.
+      key: validation_rmse
+      type: float
+    - description: Ordered list of feature names used in the model.
+      key: feature_names
+      type: List[str]
+    - description: Relative importance scores for each feature, aligned with feature_names.
+      key: feature_importances
+      type: List[float]
     prompt: Train a gradient boosting regression model (e.g., XGBoost) on the selected
       factors, targeting next‑day excess returns. Use 300 boosting rounds, learning
       rate 0.05, max depth 4. Report validation RMSE and feature importance summary.
@@ -429,6 +1025,23 @@ nodes:
     - select_significant_factors
     - merge_cleaned_data
     nodes_dependent_on: []
+    output_structure:
+    - description: Ordered list of factor names used as regressors in the model.
+      key: factor_names
+      type: List[str]
+    - description: Estimated regression coefficient for each factor, in the same order
+        as factor_names.
+      key: coefficients
+      type: List[float]
+    - description: Estimated intercept term of the linear regression.
+      key: intercept
+      type: float
+    - description: In‑sample R‑squared value of the fitted model.
+      key: r_squared
+      type: float
+    - description: Number of observations (security‑days) used to fit the model.
+      key: n_observations
+      type: int
     prompt: Using the merged dataset, regress next‑day excess returns (over risk‑free)
       on the selected factor exposures. Output the estimated coefficients, intercept,
       and in‑sample R‑squared. Summarize the model in a concise table.
@@ -442,6 +1055,28 @@ nodes:
     - select_significant_factors
     - merge_cleaned_data
     nodes_dependent_on: []
+    output_structure:
+    - description: Identifier for the trained model instance
+      key: model_name
+      type: str
+    - description: Number of trees in the random forest
+      key: n_estimators
+      type: int
+    - description: Maximum depth of each tree (default if not specified)
+      key: max_depth
+      type: int
+    - description: Out‑of‑bag R‑squared score for model performance
+      key: oob_r_squared
+      type: float
+    - description: Relative importance scores for each selected factor in the model
+      key: feature_importances
+      type: List[float]
+    - description: Count of samples used in the training set
+      key: num_training_samples
+      type: int
+    - description: Number of factor features included in the model
+      key: num_selected_factors
+      type: int
     prompt: Train a random forest regressor with the selected factor exposures as
       features and next‑day excess returns as target. Use 500 trees, default depth,
       and out‑of‑bag error estimation. Provide OOB R‑squared and a brief description
