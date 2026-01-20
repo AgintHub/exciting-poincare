@@ -1,4 +1,4 @@
-dag_type: typed
+dag_type: spec
 description: Generated workflow from UI.
 name: childrens_novel_riding_dragon_to_moon
 nodes:
@@ -33,6 +33,41 @@ nodes:
         the story.
       key: emotions
       type: List[str]
+    prd:
+      conceptual_info: This node creates a detailed character profile for the protagonist,
+        which includes their name, age, background, strengths, weaknesses, motivations,
+        and emotions.
+      docstring:
+        examples:
+        - lines:
+          - create_protagonist_character_profile(protagonist_name='Alice', protagonist_age=25,
+            protagonist_background='Alice is a skilled adventurer.', protagonist_motivation='To
+            explore the moon')
+          output: '{''protagonist_name'': ''Alice'', ''age'': 25, ''background'':
+            ''Alice is a skilled adventurer.'', ''strengths'': [''bravery'', ''intelligence''],
+            ''weaknesses'': [''impulsiveness''], ''motivations'': [''curiosity''],
+            ''emotions'': [''excitement'', ''determination'']}'
+        parameters:
+        - description: The name of the protagonist.
+          name: protagonist_name
+          type: str
+        - description: The age of the protagonist.
+          name: protagonist_age
+          type: int
+        - description: The background of the protagonist.
+          name: protagonist_background
+          type: str
+        - description: What motivates the protagonist to ride the dragon to the moon.
+          name: protagonist_motivation
+          type: str
+        raises:
+        - description: If any of the input parameters are invalid or missing.
+          type: ValueError
+        returns:
+          description: A dictionary containing the protagonist's character profile.
+          type: '{protagonist_name: str, age: int, background: str, strengths: List[str],
+            weaknesses: List[str], motivations: List[str], emotions: List[str]}'
+        summary: Creates a comprehensive character profile for the protagonist.
     prompt: Develop a detailed character profile for the protagonist, including personality
       traits, skills, and emotions.
   define_story_preconditions:
@@ -61,6 +96,50 @@ nodes:
     - description: The setting of the story
       key: story_setting
       type: str
+    prd:
+      conceptual_info: This node defines the foundational elements of the story, including
+        the protagonist's characteristics, their encounter with the dragon, the motivation
+        for their journey, and the story's setting.
+      docstring:
+        examples:
+        - lines:
+          - define_story_preconditions({
+          - '    ''protagonist_name'': ''Eva'','
+          - '    ''protagonist_age'': 25,'
+          - '    ''protagonist_background'': ''Scientist''},'
+          - '''The protagonist meets the dragon in a dream.'','
+          - '''To explore the moon and discover new species.'','
+          - '''In a futuristic, space-exploring world.'')'
+          output: '{''protagonist_name'': ''Eva'', ''protagonist_age'': 25, ''protagonist_background'':
+            ''Scientist'', ''dragon_meeting_circumstances'': ''The protagonist meets
+            the dragon in a dream.'', ''protagonist_motivation'': ''To explore the
+            moon and discover new species.'', ''story_setting'': ''In a futuristic,
+            space-exploring world.''}'
+        parameters:
+        - description: A dictionary containing the protagonist's name, age, and background.
+          name: protagonist_info
+          type: dict
+        - description: A string describing how the protagonist meets the dragon.
+          name: dragon_encounter
+          type: str
+        - description: A string outlining what motivates the protagonist to ride the
+            dragon to the moon.
+          name: protagonist_motivation
+          type: str
+        - description: A string describing the setting of the story.
+          name: story_setting
+          type: str
+        raises:
+        - description: If the input types do not match the expected types.
+          type: TypeError
+        returns:
+          description: A dictionary containing the protagonist's name, age, background,
+            the circumstances of their meeting with the dragon, their motivation for
+            the journey, and the story's setting.
+          type: dict
+        summary: Defines the preconditions for the story by specifying the protagonist's
+          details, their meeting with the dragon, the motivation for their adventure,
+          and the setting in which the story unfolds.
     prompt: What is the protagonist's name, age, and background? How does the protagonist
       meet the dragon? What motivates the protagonist to ride the dragon to the moon?
   design_dragon_character_profile:
@@ -96,6 +175,33 @@ nodes:
     - description: A list of motivations that drive the dragon's actions
       key: dragon_motivations
       type: List[str]
+    prd:
+      conceptual_info: This node generates a detailed character profile for the dragon
+        in a story, including its name, age, personality traits, skills, habits, strengths,
+        weaknesses, and motivations.
+      docstring:
+        examples:
+        - lines:
+          - dragon_profile = design_dragon_character_profile(define_story_preconditions())
+          - 'print(dragon_profile[''dragon_name''])  # Output: ''Scorched'''
+          - 'print(dragon_profile[''dragon_age''])   # Output: 500'
+          - 'print(dragon_profile[''dragon_personality_traits''])  # Output: [''fiery'',
+            ''curious'', ''loyal'']'
+          output: '{''dragon_name'': ''Scorched'', ''dragon_age'': 500, ''dragon_personality_traits'':
+            [''fiery'', ''curious'', ''loyal''], ...}'
+        parameters:
+        - description: A dictionary containing the story preconditions, including
+            protagonist, dragon, motivation, and setting.
+          name: story_preconditions
+          type: dict
+        raises:
+        - description: If the story preconditions are incomplete or invalid.
+          type: ValueError
+        returns:
+          description: A dictionary containing the detailed character profile of the
+            dragon.
+          type: dict
+        summary: Develops a comprehensive character profile for the dragon.
     prompt: Develop a detailed character profile for the dragon, including personality
       traits, skills, and habits.
   develop_plot_twists_and_turns:
@@ -124,6 +230,32 @@ nodes:
         the plot twists and turns
       key: protagonist_growth_description
       type: str
+    prd:
+      conceptual_info: This node is responsible for introducing plot twists and turns
+        to keep the reader engaged and invested in the story.
+      docstring:
+        examples:
+        - lines:
+          - plot_twists = develop_plot_twists_and_turns(moon_landing_sequence='The
+            protagonist and dragon travel to the moon.')
+          output: '{''plot_twist_descriptions'': [''The protagonist and dragon encounter
+            a meteor shower.'', ''The dragon''s scales start to glow in the dark.''],
+            ''obstacle_types'': [''meteor shower'', ''low oxygen''], ''conflict_resolution_outcomes'':
+            [True, False], ''turning_point_count'': 2, ''protagonist_growth_description'':
+            ''The protagonist learns to navigate through uncertain situations.''}'
+        parameters:
+        - description: The sequence of events leading to the moon landing.
+          name: moon_landing_sequence
+          type: str
+        raises:
+        - description: If the moon landing sequence is empty or None.
+          type: ValueError
+        returns:
+          description: A dictionary containing the plot twist descriptions, obstacle
+            types, conflict resolution outcomes, turning point count, and protagonist
+            growth description.
+          type: dict
+        summary: Develops plot twists and turns based on the moon landing sequence.
     prompt: Introduce plot twists and turns that will challenge the protagonist and
       dragon as they navigate their journey to the moon. Include obstacles, conflicts,
       and turning points.
@@ -146,11 +278,41 @@ nodes:
       key: error_correction_count
       type: int
     - description: Whether pacing issues in the novel have been resolved
-      key: ' pacing_issues_resolved'
+      key: pacing_issues_resolved
       type: bool
     - description: List of checks for character consistency throughout the novel
       key: character_consistency_checks
       type: List[bool]
+    prd:
+      conceptual_info: This node is responsible for revising and refining the novel,
+        ensuring it meets high standards of quality and engages the reader.
+      docstring:
+        examples:
+        - lines:
+          - 'first_draft = {''novel_title'': ''My Novel'', ''protagonist_name'': ''John'',
+            ''dragon_name'': ''Dragon'', ''chapter_titles'': [''Chapter 1'', ''Chapter
+            2''], ''chapter_summaries'': [''Summary 1'', ''Summary 2''], ''key_events'':
+            [''Event 1'', ''Event 2''], ''theme'': ''My Theme'', ''word_count'': 1000}'
+          - edited_novel = edit_and_refine_novel(first_draft)
+          output: '{''edited_novel_content'': ''Refined novel content'', ''revision_notes'':
+            [''Note 1'', ''Note 2''], ''error_correction_count'': 5, ''pacing_issues_resolved'':
+            True, ''character_consistency_checks'': [True, False]}'
+        parameters:
+        - description: The output of the write_first_draft_of_novel node, containing
+            the novel's title, protagonist name, dragon name, chapter titles, chapter
+            summaries, key events, theme, and word count.
+          name: first_draft
+          type: dict
+        raises:
+        - description: If the input first draft is invalid or incomplete.
+          type: ValueError
+        returns:
+          description: A dictionary containing the edited novel content, revision
+            notes, error correction count, pacing issues resolved, and character consistency
+            checks.
+          type: dict
+        summary: Revises and refines the novel based on the first draft, ensuring
+          it is engaging, well-paced, and free of errors.
     prompt: Revise and refine the novel to ensure it is engaging, well-paced, and
       free of errors.
   plan_moon_landing_sequence:
@@ -186,6 +348,45 @@ nodes:
     - description: Whether the moon landing sequence has been successfully planned
       key: sequence_completion_status
       type: bool
+    prd:
+      conceptual_info: This node plans a detailed sequence of events for the protagonist
+        and dragon to land on the moon.
+      docstring:
+        examples:
+        - lines:
+          - 'protagonist_profile = {''name'': ''Alice'', ''age'': 25, ''background'':
+            ''Astronaut'', ''strengths'': [''Leadership''], ''weaknesses'': [''Impulsiveness''],
+            ''motivations'': [''Explore space''], ''emotions'': [''Excitement'']}'
+          - 'dragon_profile = {''name'': ''Dragon1'', ''age'': 100, ''personality_traits'':
+            [''Loyal''], ''skills'': [''Flight''], ''habits'': [''Sleeping''], ''strengths'':
+            [''Speed''], ''weaknesses'': [''Vulnerability to fire''], ''motivations'':
+            [''Protect protagonist'']}'
+          - plan_moon_landing_sequence(protagonist_profile, dragon_profile)
+          output: '{''moon_landing_sequence'': ''The protagonist and dragon will prepare
+            for launch, fly to the moon, and conduct lunar exploration.'', ''preparation_steps'':
+            [''Check fuel'', ''Perform safety checks''], ''flight_details'': [''Navigate
+            through space'', ''Communicate with Earth''], ''lunar_exploration_plan'':
+            ''Visit craters and conduct experiments.'', ''landing_site_coordinates'':
+            [12.34, 56.78], ''sequence_completion_status'': True}'
+        parameters:
+        - description: The protagonist's character profile, including name, age, background,
+            strengths, weaknesses, motivations, and emotions.
+          name: protagonist_profile
+          type: dict
+        - description: The dragon's character profile, including name, age, personality
+            traits, skills, habits, strengths, weaknesses, and motivations.
+          name: dragon_profile
+          type: dict
+        raises:
+        - description: If either the protagonist or dragon profile is incomplete or
+            missing.
+          type: ValueError
+        returns:
+          description: A dictionary containing the moon landing sequence, preparation
+            steps, flight details, lunar exploration plan, landing site coordinates,
+            and sequence completion status.
+          type: dict
+        summary: Plans a moon landing sequence for the protagonist and dragon.
     prompt: Describe the sequence of events that will lead to the protagonist and
       dragon landing on the moon. Include important details such as preparation, flight,
       and lunar exploration.
@@ -213,12 +414,41 @@ nodes:
     - description: Date of publication
       key: publication_date
       type: str
+    prd:
+      conceptual_info: This node represents the final step in the novel creation process,
+        where the edited novel is proofread and prepared for publication.
+      docstring:
+        examples:
+        - lines:
+          - proofread_and_publish_novel(edited_novel_content='The final draft of the
+            novel.')
+          output: '{''publication_status'': True, ''error_count'': 0, ''typos_corrected'':
+            [], ''publication_format'': ''eBook'', ''publication_date'': ''2024-01-01''}'
+        - lines:
+          - proofread_and_publish_novel(edited_novel_content='The novel with typos.')
+          output: '{''publication_status'': True, ''error_count'': 1, ''typos_corrected'':
+            [''typo1''], ''publication_format'': ''paperback'', ''publication_date'':
+            ''2024-01-15''}'
+        parameters:
+        - description: The refined content of the novel from the edit_and_refine_novel
+            node
+          name: edited_novel_content
+          type: str
+        raises:
+        - description: If the input novel content is empty or invalid
+          type: ValueError
+        returns:
+          description: A dictionary containing the publication status, error count,
+            typos corrected, publication format, and publication date
+          type: dict
+        summary: Proofread and publish the novel.
     prompt: Thoroughly proofread the novel for errors and typos, and prepare it for
       publication.
   write_first_draft_of_novel:
     agent: false
-    description: Use the developed elements to write the first draft of the novel,
-      filling in the gaps and fine-tuning the story.
+    description: Generates the initial narrative draft of a children's novel featuring
+      a protagonist and dragon journeying to the moon, integrating character profiles,
+      landing sequence, and plot twists into chapter structure and key events.
     name: write_first_draft_of_novel
     nodes_depended_on:
     - create_protagonist_character_profile
@@ -252,5 +482,49 @@ nodes:
     - description: Estimated total word count of the first draft
       key: word_count
       type: int
+    prd:
+      conceptual_info: The node composes a complete first draft of a children's novel
+        by weaving together character details, a moon‑landing journey, and narrative
+        twists into a structured chapter format.
+      docstring:
+        examples:
+        - lines:
+          - draft = write_first_draft_of_novel(protagonist_profile=protagonist,
+          - '                                 dragon_profile=dragon,'
+          - '                                 moon_sequence=moon_seq,'
+          - '                                 plot_twists=twists)'
+          output: '{''novel_title'': ''Starlight Riders'', ''protagonist_name'': ''Luna'',
+            ''dragon_name'': ''Eclipse'', ...}'
+        - lines:
+          - print(draft['theme'])
+          output: '''Bravery and friendship can conquer even the sky''s limits.'''
+        parameters:
+        - description: Dictionary containing protagonist_name, age, background, strengths,
+            weaknesses, motivations, emotions.
+          name: protagonist_profile
+          type: dict
+        - description: Dictionary containing dragon_name, dragon_age, dragon_personality_traits,
+            dragon_skills, dragon_habits, dragon_strengths, dragon_weaknesses, dragon_motivations.
+          name: dragon_profile
+          type: dict
+        - description: Dictionary containing moon_landing_sequence, preparation_steps,
+            flight_details, lunar_exploration_plan, landing_site_coordinates, sequence_completion_status.
+          name: moon_sequence
+          type: dict
+        - description: Dictionary containing plot_twist_descriptions, obstacle_types,
+            conflict_resolution_outcomes, turning_point_count, protagonist_growth_description.
+          name: plot_twists
+          type: dict
+        raises:
+        - description: Raised if any required input field is missing or empty.
+          type: ValueError
+        - description: Raised if inputs do not match expected structure or types.
+          type: TypeError
+        returns:
+          description: A dictionary with keys novel_title, protagonist_name, dragon_name,
+            chapter_titles, chapter_summaries, key_events, theme, and word_count.
+          type: dict
+        summary: Generate a first‑draft novel from character profiles, landing sequence,
+          and plot twists.
     prompt: Use the developed characters, sequence of events, and plot twists to write
       the first draft of the novel.
