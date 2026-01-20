@@ -1,6 +1,5 @@
-dag_type: plain_text
-description: Write a children's novel about riding a dragon to the moon, including
-  character development, plot progression, and lunar exploration.
+dag_type: typed
+description: Generated workflow from UI.
 name: childrens_novel_riding_dragon_to_moon
 nodes:
   create_protagonist_character_profile:
@@ -11,6 +10,29 @@ nodes:
     nodes_depended_on:
     - define_story_preconditions
     nodes_dependent_on: []
+    output_structure:
+    - description: The name of the protagonist.
+      key: protagonist_name
+      type: str
+    - description: The age of the protagonist.
+      key: age
+      type: int
+    - description: A brief background description of the protagonist.
+      key: background
+      type: str
+    - description: List of the protagonist's key strengths.
+      key: strengths
+      type: List[str]
+    - description: List of the protagonist's key weaknesses.
+      key: weaknesses
+      type: List[str]
+    - description: List of the protagonist's motivations for the journey.
+      key: motivations
+      type: List[str]
+    - description: List of primary emotions the protagonist experiences throughout
+        the story.
+      key: emotions
+      type: List[str]
     prompt: Develop a detailed character profile for the protagonist, including personality
       traits, skills, and emotions.
   define_story_preconditions:
@@ -20,6 +42,25 @@ nodes:
     name: define_story_preconditions
     nodes_depended_on: []
     nodes_dependent_on: []
+    output_structure:
+    - description: The name of the protagonist
+      key: protagonist_name
+      type: str
+    - description: The age of the protagonist
+      key: protagonist_age
+      type: int
+    - description: The background of the protagonist
+      key: protagonist_background
+      type: str
+    - description: How the protagonist meets the dragon
+      key: dragon_meeting_circumstances
+      type: str
+    - description: What motivates the protagonist to ride the dragon to the moon
+      key: protagonist_motivation
+      type: str
+    - description: The setting of the story
+      key: story_setting
+      type: str
     prompt: What is the protagonist's name, age, and background? How does the protagonist
       meet the dragon? What motivates the protagonist to ride the dragon to the moon?
   design_dragon_character_profile:
@@ -30,6 +71,31 @@ nodes:
     nodes_depended_on:
     - define_story_preconditions
     nodes_dependent_on: []
+    output_structure:
+    - description: The name of the dragon
+      key: dragon_name
+      type: str
+    - description: The age of the dragon
+      key: dragon_age
+      type: int
+    - description: A list of personality traits that describe the dragon
+      key: dragon_personality_traits
+      type: List[str]
+    - description: A list of skills that the dragon possesses
+      key: dragon_skills
+      type: List[str]
+    - description: A list of habits that the dragon has
+      key: dragon_habits
+      type: List[str]
+    - description: A list of strengths that the dragon has
+      key: dragon_strengths
+      type: List[str]
+    - description: A list of weaknesses that the dragon has
+      key: dragon_weaknesses
+      type: List[str]
+    - description: A list of motivations that drive the dragon's actions
+      key: dragon_motivations
+      type: List[str]
     prompt: Develop a detailed character profile for the dragon, including personality
       traits, skills, and habits.
   develop_plot_twists_and_turns:
@@ -40,6 +106,24 @@ nodes:
     nodes_depended_on:
     - plan_moon_landing_sequence
     nodes_dependent_on: []
+    output_structure:
+    - description: List of descriptions for each plot twist
+      key: plot_twist_descriptions
+      type: List[str]
+    - description: List of types of obstacles the protagonist and dragon will face
+      key: obstacle_types
+      type: List[str]
+    - description: List of boolean outcomes indicating whether each conflict is resolved
+        successfully
+      key: conflict_resolution_outcomes
+      type: List[bool]
+    - description: Number of turning points in the plot
+      key: turning_point_count
+      type: int
+    - description: Description of the protagonist's growth and development throughout
+        the plot twists and turns
+      key: protagonist_growth_description
+      type: str
     prompt: Introduce plot twists and turns that will challenge the protagonist and
       dragon as they navigate their journey to the moon. Include obstacles, conflicts,
       and turning points.
@@ -51,6 +135,22 @@ nodes:
     nodes_depended_on:
     - write_first_draft_of_novel
     nodes_dependent_on: []
+    output_structure:
+    - description: The refined content of the novel
+      key: edited_novel_content
+      type: str
+    - description: List of notes and comments made during the revision process
+      key: revision_notes
+      type: List[str]
+    - description: The number of errors corrected during the editing process
+      key: error_correction_count
+      type: int
+    - description: Whether pacing issues in the novel have been resolved
+      key: ' pacing_issues_resolved'
+      type: bool
+    - description: List of checks for character consistency throughout the novel
+      key: character_consistency_checks
+      type: List[bool]
     prompt: Revise and refine the novel to ensure it is engaging, well-paced, and
       free of errors.
   plan_moon_landing_sequence:
@@ -63,6 +163,29 @@ nodes:
     - create_protagonist_character_profile
     - design_dragon_character_profile
     nodes_dependent_on: []
+    output_structure:
+    - description: A detailed description of the sequence of events leading to the
+        moon landing
+      key: moon_landing_sequence
+      type: str
+    - description: List of preparation steps taken by the protagonist and dragon before
+        launching to the moon
+      key: preparation_steps
+      type: List[str]
+    - description: List of details about the flight to the moon, including navigation,
+        propulsion, and communication
+      key: flight_details
+      type: List[str]
+    - description: A detailed plan for the protagonist and dragon's lunar exploration,
+        including sites to visit and experiments to conduct
+      key: lunar_exploration_plan
+      type: str
+    - description: List of coordinates for the planned moon landing site
+      key: landing_site_coordinates
+      type: List[float]
+    - description: Whether the moon landing sequence has been successfully planned
+      key: sequence_completion_status
+      type: bool
     prompt: Describe the sequence of events that will lead to the protagonist and
       dragon landing on the moon. Include important details such as preparation, flight,
       and lunar exploration.
@@ -74,6 +197,22 @@ nodes:
     nodes_depended_on:
     - edit_and_refine_novel
     nodes_dependent_on: []
+    output_structure:
+    - description: Whether the novel has been successfully published
+      key: publication_status
+      type: bool
+    - description: Number of errors found during proofreading
+      key: error_count
+      type: int
+    - description: List of typos corrected during proofreading
+      key: typos_corrected
+      type: List[str]
+    - description: Format of the published novel (e.g. eBook, paperback, hardcover)
+      key: publication_format
+      type: str
+    - description: Date of publication
+      key: publication_date
+      type: str
     prompt: Thoroughly proofread the novel for errors and typos, and prepare it for
       publication.
   write_first_draft_of_novel:
@@ -87,5 +226,31 @@ nodes:
     - plan_moon_landing_sequence
     - develop_plot_twists_and_turns
     nodes_dependent_on: []
+    output_structure:
+    - description: The title of the novel
+      key: novel_title
+      type: str
+    - description: Name of the protagonist as defined in the character profile
+      key: protagonist_name
+      type: str
+    - description: Name or designation of the dragon as defined in the character profile
+      key: dragon_name
+      type: str
+    - description: List of chapter titles in order
+      key: chapter_titles
+      type: List[str]
+    - description: Brief summary of each chapter aligned with chapter_titles
+      key: chapter_summaries
+      type: List[str]
+    - description: List of major events that occur in the novel, each described in
+        a single sentence
+      key: key_events
+      type: List[str]
+    - description: Primary theme or moral of the story
+      key: theme
+      type: str
+    - description: Estimated total word count of the first draft
+      key: word_count
+      type: int
     prompt: Use the developed characters, sequence of events, and plot twists to write
       the first draft of the novel.
