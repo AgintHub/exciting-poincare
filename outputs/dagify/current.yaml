@@ -1,11 +1,56 @@
-dag_type: spec
+dag_type: stub
 description: Generated workflow from UI.
 name: childrens_novel_riding_dragon_to_moon
 nodes:
   create_protagonist_character_profile:
     agent: false
+    code_node_type: stub
     description: Create a comprehensive character profile for the protagonist, highlighting
       their strengths, weaknesses, and motivations.
+    implementation: "from pydantic import BaseModel, Field\nfrom typing import List\n\
+      \n\nclass DefineStoryPreconditionsOutput(BaseModel):\n    \"\"\"Pydantic model\
+      \ for define_story_preconditions node outputs.\"\"\"\n    protagonist_name:\
+      \ str = (\n        Field(..., description=\"The name of the protagonist\")\n\
+      \    )\n    protagonist_age: int = Field(..., description=\"The age of the protagonist\"\
+      )\n    protagonist_background: str = (\n        Field(..., description=\"The\
+      \ background of the protagonist\")\n    )\n    dragon_meeting_circumstances:\
+      \ str = (\n        Field(..., description=\"How the protagonist meets the dragon\"\
+      )\n    )\n    protagonist_motivation: str = (\n        Field(..., description=\"\
+      What motivates the protagonist to ride the dragon to the moon\")\n    )\n  \
+      \  story_setting: str = Field(..., description=\"The setting of the story\"\
+      )\n\n\nclass CreateProtagonistCharacterProfileOutput(BaseModel):\n    \"\"\"\
+      Pydantic model for create_protagonist_character_profile node outputs.\"\"\"\n\
+      \    protagonist_name: str = (\n        Field(..., description=\"The name of\
+      \ the protagonist.\")\n    )\n    age: int = Field(..., description=\"The age\
+      \ of the protagonist.\")\n    background: str = (\n        Field(..., description=\"\
+      A brief background description of the protagonist.\")\n    )\n    strengths:\
+      \ List[str] = (\n        Field(..., description=\"List of the protagonist's\
+      \ key strengths.\")\n    )\n    weaknesses: List[str] = (\n        Field(...,\
+      \ description=\"List of the protagonist's key weaknesses.\")\n    )\n    motivations:\
+      \ List[str] = (\n        Field(..., description=\"List of the protagonist's\
+      \ motivations for the journey.\")\n    )\n    emotions: List[str] = (\n    \
+      \    Field(..., description=\"List of primary emotions the protagonist experiences\
+      \ throughout the story.\")\n    )\n\n\ndef create_protagonist_character_profile(define_story_preconditions_input:\
+      \ DefineStoryPreconditionsOutput, **kwargs) -> CreateProtagonistCharacterProfileOutput:\n\
+      \    \"\"\"\n    Creates a comprehensive character profile for the protagonist.\n\
+      \n    Parameters\n    ----------\n    protagonist_name : str\n        The name\
+      \ of the protagonist.\n    protagonist_age : int\n        The age of the protagonist.\n\
+      \    protagonist_background : str\n        The background of the protagonist.\n\
+      \    protagonist_motivation : str\n        What motivates the protagonist to\
+      \ ride the dragon to the moon.\n\n    Returns\n    -------\n    {protagonist_name:\
+      \ str, age: int, background: str, strengths: List[str], weaknesses: List[str],\
+      \ motivations: List[str], emotions: List[str]}\n        A dictionary containing\
+      \ the protagonist's character profile.\n\n    Raises\n    ------\n    ValueError\n\
+      \        If any of the input parameters are invalid or missing.\n\n    Examples\n\
+      \    --------\n    >>> create_protagonist_character_profile(protagonist_name='Alice',\n\
+      \    protagonist_age=25, protagonist_background='Alice is a skilled adventurer.',\n\
+      \    protagonist_motivation='To explore the moon')\n    {'protagonist_name':\
+      \ 'Alice', 'age': 25, 'background': 'Alice is a skilled\n    adventurer.', 'strengths':\
+      \ ['bravery', 'intelligence'], 'weaknesses':\n    ['impulsiveness'], 'motivations':\
+      \ ['curiosity'], 'emotions': ['excitement',\n    'determination']}\n\n    \"\
+      \"\"\n    return CreateProtagonistCharacterProfileOutput(\n        protagonist_name=\"\
+      \",\n        age=0,\n        background=\"\",\n        strengths=[],\n     \
+      \   weaknesses=[],\n        motivations=[],\n        emotions=[],\n    )"
     name: create_protagonist_character_profile
     nodes_depended_on:
     - define_story_preconditions
@@ -70,10 +115,50 @@ nodes:
         summary: Creates a comprehensive character profile for the protagonist.
     prompt: Develop a detailed character profile for the protagonist, including personality
       traits, skills, and emotions.
+    shims: []
   define_story_preconditions:
     agent: false
+    code_node_type: stub
     description: 'Define the preconditions for the story: protagonist, dragon, motivation,
       and setting.'
+    implementation: "from pydantic import BaseModel, Field\n\n\nclass DefineStoryPreconditionsOutput(BaseModel):\n\
+      \    \"\"\"Pydantic model for define_story_preconditions node outputs.\"\"\"\
+      \n    protagonist_name: str = (\n        Field(..., description=\"The name of\
+      \ the protagonist\")\n    )\n    protagonist_age: int = Field(..., description=\"\
+      The age of the protagonist\")\n    protagonist_background: str = (\n       \
+      \ Field(..., description=\"The background of the protagonist\")\n    )\n   \
+      \ dragon_meeting_circumstances: str = (\n        Field(..., description=\"How\
+      \ the protagonist meets the dragon\")\n    )\n    protagonist_motivation: str\
+      \ = (\n        Field(..., description=\"What motivates the protagonist to ride\
+      \ the dragon to the moon\")\n    )\n    story_setting: str = Field(..., description=\"\
+      The setting of the story\")\n\n\ndef define_story_preconditions(general_input:\
+      \ str, **kwargs) -> DefineStoryPreconditionsOutput:\n    \"\"\"\n    Defines\
+      \ the preconditions for the story by specifying the protagonist's\n    details,\
+      \ their meeting with the dragon, the motivation for their adventure,\n    and\
+      \ the setting in which the story unfolds.\n\n    Parameters\n    ----------\n\
+      \    protagonist_info : dict\n        A dictionary containing the protagonist's\
+      \ name, age, and background.\n    dragon_encounter : str\n        A string describing\
+      \ how the protagonist meets the dragon.\n    protagonist_motivation : str\n\
+      \        A string outlining what motivates the protagonist to ride the dragon\n\
+      \        to the moon.\n    story_setting : str\n        A string describing\
+      \ the setting of the story.\n\n    Returns\n    -------\n    dict\n        A\
+      \ dictionary containing the protagonist's name, age, background, the\n     \
+      \   circumstances of their meeting with the dragon, their motivation for\n \
+      \       the journey, and the story's setting.\n\n    Raises\n    ------\n  \
+      \  TypeError\n        If the input types do not match the expected types.\n\n\
+      \    Examples\n    --------\n    >>> define_story_preconditions({\n    ... \
+      \    'protagonist_name': 'Eva',\n    ...     'protagonist_age': 25,\n    ...\
+      \     'protagonist_background': 'Scientist'},\n    >>> 'The protagonist meets\
+      \ the dragon in a dream.',\n    >>> 'To explore the moon and discover new species.',\n\
+      \    >>> 'In a futuristic, space-exploring world.')\n    {'protagonist_name':\
+      \ 'Eva', 'protagonist_age': 25, 'protagonist_background':\n    'Scientist',\
+      \ 'dragon_meeting_circumstances': 'The protagonist meets the\n    dragon in\
+      \ a dream.', 'protagonist_motivation': 'To explore the moon and\n    discover\
+      \ new species.', 'story_setting': 'In a futuristic, space-exploring\n    world.'}\n\
+      \n    \"\"\"\n    return DefineStoryPreconditionsOutput(\n        protagonist_name=\"\
+      \",\n        protagonist_age=0,\n        protagonist_background=\"\",\n    \
+      \    dragon_meeting_circumstances=\"\",\n        protagonist_motivation=\"\"\
+      ,\n        story_setting=\"\",\n    )"
     name: define_story_preconditions
     nodes_depended_on: []
     nodes_dependent_on: []
@@ -142,10 +227,54 @@ nodes:
           and the setting in which the story unfolds.
     prompt: What is the protagonist's name, age, and background? How does the protagonist
       meet the dragon? What motivates the protagonist to ride the dragon to the moon?
+    shims: []
   design_dragon_character_profile:
     agent: false
+    code_node_type: stub
     description: Create a comprehensive character profile for the dragon, highlighting
       its strengths, weaknesses, and motivations.
+    implementation: "from pydantic import BaseModel, Field\nfrom typing import List\n\
+      \n\nclass DefineStoryPreconditionsOutput(BaseModel):\n    \"\"\"Pydantic model\
+      \ for define_story_preconditions node outputs.\"\"\"\n    protagonist_name:\
+      \ str = (\n        Field(..., description=\"The name of the protagonist\")\n\
+      \    )\n    protagonist_age: int = Field(..., description=\"The age of the protagonist\"\
+      )\n    protagonist_background: str = (\n        Field(..., description=\"The\
+      \ background of the protagonist\")\n    )\n    dragon_meeting_circumstances:\
+      \ str = (\n        Field(..., description=\"How the protagonist meets the dragon\"\
+      )\n    )\n    protagonist_motivation: str = (\n        Field(..., description=\"\
+      What motivates the protagonist to ride the dragon to the moon\")\n    )\n  \
+      \  story_setting: str = Field(..., description=\"The setting of the story\"\
+      )\n\n\nclass DesignDragonCharacterProfileOutput(BaseModel):\n    \"\"\"Pydantic\
+      \ model for design_dragon_character_profile node outputs.\"\"\"\n    dragon_name:\
+      \ str = Field(..., description=\"The name of the dragon\")\n    dragon_age:\
+      \ int = Field(..., description=\"The age of the dragon\")\n    dragon_personality_traits:\
+      \ List[str] = (\n        Field(..., description=\"A list of personality traits\
+      \ that describe the dragon\")\n    )\n    dragon_skills: List[str] = (\n   \
+      \     Field(..., description=\"A list of skills that the dragon possesses\"\
+      )\n    )\n    dragon_habits: List[str] = (\n        Field(..., description=\"\
+      A list of habits that the dragon has\")\n    )\n    dragon_strengths: List[str]\
+      \ = (\n        Field(..., description=\"A list of strengths that the dragon\
+      \ has\")\n    )\n    dragon_weaknesses: List[str] = (\n        Field(..., description=\"\
+      A list of weaknesses that the dragon has\")\n    )\n    dragon_motivations:\
+      \ List[str] = (\n        Field(..., description=\"A list of motivations that\
+      \ drive the dragon's actions\")\n    )\n\n\ndef design_dragon_character_profile(define_story_preconditions_input:\
+      \ DefineStoryPreconditionsOutput, **kwargs) -> DesignDragonCharacterProfileOutput:\n\
+      \    \"\"\"\n    Develops a comprehensive character profile for the dragon.\n\
+      \n    Parameters\n    ----------\n    story_preconditions : dict\n        A\
+      \ dictionary containing the story preconditions, including\n        protagonist,\
+      \ dragon, motivation, and setting.\n\n    Returns\n    -------\n    dict\n \
+      \       A dictionary containing the detailed character profile of the\n    \
+      \    dragon.\n\n    Raises\n    ------\n    ValueError\n        If the story\
+      \ preconditions are incomplete or invalid.\n\n    Examples\n    --------\n \
+      \   >>> dragon_profile =\n    design_dragon_character_profile(define_story_preconditions())\n\
+      \    >>> print(dragon_profile['dragon_name'])  # Output: 'Scorched'\n    >>>\
+      \ print(dragon_profile['dragon_age'])   # Output: 500\n    >>> print(dragon_profile['dragon_personality_traits'])\
+      \  # Output: ['fiery',\n    'curious', 'loyal']\n    {'dragon_name': 'Scorched',\
+      \ 'dragon_age': 500, 'dragon_personality_traits':\n    ['fiery', 'curious',\
+      \ 'loyal'], ...}\n\n    \"\"\"\n    return DesignDragonCharacterProfileOutput(\n\
+      \        dragon_name=\"\",\n        dragon_age=0,\n        dragon_personality_traits=[],\n\
+      \        dragon_skills=[],\n        dragon_habits=[],\n        dragon_strengths=[],\n\
+      \        dragon_weaknesses=[],\n        dragon_motivations=[],\n    )"
     name: design_dragon_character_profile
     nodes_depended_on:
     - define_story_preconditions
@@ -204,10 +333,57 @@ nodes:
         summary: Develops a comprehensive character profile for the dragon.
     prompt: Develop a detailed character profile for the dragon, including personality
       traits, skills, and habits.
+    shims: []
   develop_plot_twists_and_turns:
     agent: false
+    code_node_type: stub
     description: Develop plot twists and turns that will keep the reader engaged and
       invested in the story, highlighting the protagonist's growth and development.
+    implementation: "from pydantic import BaseModel, Field\nfrom typing import List\n\
+      \n\nclass PlanMoonLandingSequenceOutput(BaseModel):\n    \"\"\"Pydantic model\
+      \ for plan_moon_landing_sequence node outputs.\"\"\"\n    moon_landing_sequence:\
+      \ str = (\n        Field(..., description=\"A detailed description of the sequence\
+      \ of events leading to the moon landing\")\n    )\n    preparation_steps: List[str]\
+      \ = (\n        Field(..., description=\"List of preparation steps taken by the\
+      \ protagonist and dragon before launching to the moon\")\n    )\n    flight_details:\
+      \ List[str] = (\n        Field(..., description=\"List of details about the\
+      \ flight to the moon, including navigation, propulsion, and communication\"\
+      )\n    )\n    lunar_exploration_plan: str = (\n        Field(..., description=\"\
+      A detailed plan for the protagonist and dragon's lunar exploration, including\
+      \ sites to visit and experiments to conduct\")\n    )\n    landing_site_coordinates:\
+      \ List[float] = (\n        Field(..., description=\"List of coordinates for\
+      \ the planned moon landing site\")\n    )\n    sequence_completion_status: bool\
+      \ = (\n        Field(..., description=\"Whether the moon landing sequence has\
+      \ been successfully planned\")\n    )\n\n\nclass DevelopPlotTwistsAndTurnsOutput(BaseModel):\n\
+      \    \"\"\"Pydantic model for develop_plot_twists_and_turns node outputs.\"\"\
+      \"\n    plot_twist_descriptions: List[str] = (\n        Field(..., description=\"\
+      List of descriptions for each plot twist\")\n    )\n    obstacle_types: List[str]\
+      \ = (\n        Field(..., description=\"List of types of obstacles the protagonist\
+      \ and dragon will face\")\n    )\n    conflict_resolution_outcomes: List[bool]\
+      \ = (\n        Field(..., description=\"List of boolean outcomes indicating\
+      \ whether each conflict is resolved successfully\")\n    )\n    turning_point_count:\
+      \ int = (\n        Field(..., description=\"Number of turning points in the\
+      \ plot\")\n    )\n    protagonist_growth_description: str = (\n        Field(...,\
+      \ description=\"Description of the protagonist's growth and development throughout\
+      \ the plot twists and turns\")\n    )\n\n\ndef develop_plot_twists_and_turns(plan_moon_landing_sequence_input:\
+      \ PlanMoonLandingSequenceOutput, **kwargs) -> DevelopPlotTwistsAndTurnsOutput:\n\
+      \    \"\"\"\n    Develops plot twists and turns based on the moon landing sequence.\n\
+      \n    Parameters\n    ----------\n    moon_landing_sequence : str\n        The\
+      \ sequence of events leading to the moon landing.\n\n    Returns\n    -------\n\
+      \    dict\n        A dictionary containing the plot twist descriptions, obstacle\
+      \ types,\n        conflict resolution outcomes, turning point count, and protagonist\n\
+      \        growth description.\n\n    Raises\n    ------\n    ValueError\n   \
+      \     If the moon landing sequence is empty or None.\n\n    Examples\n    --------\n\
+      \    >>> plot_twists = develop_plot_twists_and_turns(moon_landing_sequence='The\n\
+      \    protagonist and dragon travel to the moon.')\n    {'plot_twist_descriptions':\
+      \ ['The protagonist and dragon encounter a meteor\n    shower.', 'The dragon's\
+      \ scales start to glow in the dark.'],\n    'obstacle_types': ['meteor shower',\
+      \ 'low oxygen'],\n    'conflict_resolution_outcomes': [True, False], 'turning_point_count':\
+      \ 2,\n    'protagonist_growth_description': 'The protagonist learns to navigate\n\
+      \    through uncertain situations.'}\n\n    \"\"\"\n    return DevelopPlotTwistsAndTurnsOutput(\n\
+      \        plot_twist_descriptions=[],\n        obstacle_types=[],\n        conflict_resolution_outcomes=[],\n\
+      \        turning_point_count=0,\n        protagonist_growth_description=\"\"\
+      ,\n    )"
     name: develop_plot_twists_and_turns
     nodes_depended_on:
     - plan_moon_landing_sequence
@@ -259,10 +435,59 @@ nodes:
     prompt: Introduce plot twists and turns that will challenge the protagonist and
       dragon as they navigate their journey to the moon. Include obstacles, conflicts,
       and turning points.
+    shims: []
   edit_and_refine_novel:
     agent: false
+    code_node_type: stub
     description: Revise and refine the novel to ensure that it meets the highest standards
       of quality, engaging the reader and conveying the story effectively.
+    implementation: "from pydantic import BaseModel, Field\nfrom typing import List\n\
+      \n\nclass WriteFirstDraftOfNovelOutput(BaseModel):\n    \"\"\"Pydantic model\
+      \ for write_first_draft_of_novel node outputs.\"\"\"\n    novel_title: str =\
+      \ Field(..., description=\"The title of the novel\")\n    protagonist_name:\
+      \ str = (\n        Field(..., description=\"Name of the protagonist as defined\
+      \ in the character profile\")\n    )\n    dragon_name: str = (\n        Field(...,\
+      \ description=\"Name or designation of the dragon as defined in the character\
+      \ profile\")\n    )\n    chapter_titles: List[str] = (\n        Field(..., description=\"\
+      List of chapter titles in order\")\n    )\n    chapter_summaries: List[str]\
+      \ = (\n        Field(..., description=\"Brief summary of each chapter aligned\
+      \ with chapter_titles\")\n    )\n    key_events: List[str] = (\n        Field(...,\
+      \ description=\"List of major events that occur in the novel, each described\
+      \ in a single sentence\")\n    )\n    theme: str = Field(..., description=\"\
+      Primary theme or moral of the story\")\n    word_count: int = (\n        Field(...,\
+      \ description=\"Estimated total word count of the first draft\")\n    )\n\n\n\
+      class EditAndRefineNovelOutput(BaseModel):\n    \"\"\"Pydantic model for edit_and_refine_novel\
+      \ node outputs.\"\"\"\n    edited_novel_content: str = (\n        Field(...,\
+      \ description=\"The refined content of the novel\")\n    )\n    revision_notes:\
+      \ List[str] = (\n        Field(..., description=\"List of notes and comments\
+      \ made during the revision process\")\n    )\n    error_correction_count: int\
+      \ = (\n        Field(..., description=\"The number of errors corrected during\
+      \ the editing process\")\n    )\n    pacing_issues_resolved: bool = (\n    \
+      \    Field(..., description=\"Whether pacing issues in the novel have been resolved\"\
+      )\n    )\n    character_consistency_checks: List[bool] = (\n        Field(...,\
+      \ description=\"List of checks for character consistency throughout the novel\"\
+      )\n    )\n\n\ndef edit_and_refine_novel(write_first_draft_of_novel_input: WriteFirstDraftOfNovelOutput,\
+      \ **kwargs) -> EditAndRefineNovelOutput:\n    \"\"\"\n    Revises and refines\
+      \ the novel based on the first draft, ensuring it is\n    engaging, well-paced,\
+      \ and free of errors.\n\n    Parameters\n    ----------\n    first_draft : dict\n\
+      \        The output of the write_first_draft_of_novel node, containing the\n\
+      \        novel's title, protagonist name, dragon name, chapter titles,\n   \
+      \     chapter summaries, key events, theme, and word count.\n\n    Returns\n\
+      \    -------\n    dict\n        A dictionary containing the edited novel content,\
+      \ revision notes,\n        error correction count, pacing issues resolved, and\
+      \ character\n        consistency checks.\n\n    Raises\n    ------\n    ValueError\n\
+      \        If the input first draft is invalid or incomplete.\n\n    Examples\n\
+      \    --------\n    >>> first_draft = {'novel_title': 'My Novel', 'protagonist_name':\
+      \ 'John',\n    'dragon_name': 'Dragon', 'chapter_titles': ['Chapter 1', 'Chapter\
+      \ 2'],\n    'chapter_summaries': ['Summary 1', 'Summary 2'], 'key_events': ['Event\
+      \ 1',\n    'Event 2'], 'theme': 'My Theme', 'word_count': 1000}\n    >>> edited_novel\
+      \ = edit_and_refine_novel(first_draft)\n    {'edited_novel_content': 'Refined\
+      \ novel content', 'revision_notes': ['Note\n    1', 'Note 2'], 'error_correction_count':\
+      \ 5, 'pacing_issues_resolved': True,\n    'character_consistency_checks': [True,\
+      \ False]}\n\n    \"\"\"\n    return EditAndRefineNovelOutput(\n        edited_novel_content=\"\
+      \",\n        revision_notes=[],\n        error_correction_count=0,\n       \
+      \ pacing_issues_resolved=False,\n        character_consistency_checks=[],\n\
+      \    )"
     name: edit_and_refine_novel
     nodes_depended_on:
     - write_first_draft_of_novel
@@ -315,11 +540,85 @@ nodes:
           it is engaging, well-paced, and free of errors.
     prompt: Revise and refine the novel to ensure it is engaging, well-paced, and
       free of errors.
+    shims: []
   plan_moon_landing_sequence:
     agent: false
+    code_node_type: stub
     description: Develop a sequence of events that will lead to the protagonist and
       dragon landing on the moon, highlighting their journey and the consequences
       of their actions.
+    implementation: "from pydantic import BaseModel, Field\nfrom typing import List\n\
+      \n\nclass CreateProtagonistCharacterProfileOutput(BaseModel):\n    \"\"\"Pydantic\
+      \ model for create_protagonist_character_profile node outputs.\"\"\"\n    protagonist_name:\
+      \ str = (\n        Field(..., description=\"The name of the protagonist.\")\n\
+      \    )\n    age: int = Field(..., description=\"The age of the protagonist.\"\
+      )\n    background: str = (\n        Field(..., description=\"A brief background\
+      \ description of the protagonist.\")\n    )\n    strengths: List[str] = (\n\
+      \        Field(..., description=\"List of the protagonist's key strengths.\"\
+      )\n    )\n    weaknesses: List[str] = (\n        Field(..., description=\"List\
+      \ of the protagonist's key weaknesses.\")\n    )\n    motivations: List[str]\
+      \ = (\n        Field(..., description=\"List of the protagonist's motivations\
+      \ for the journey.\")\n    )\n    emotions: List[str] = (\n        Field(...,\
+      \ description=\"List of primary emotions the protagonist experiences throughout\
+      \ the story.\")\n    )\n\n\nclass DesignDragonCharacterProfileOutput(BaseModel):\n\
+      \    \"\"\"Pydantic model for design_dragon_character_profile node outputs.\"\
+      \"\"\n    dragon_name: str = Field(..., description=\"The name of the dragon\"\
+      )\n    dragon_age: int = Field(..., description=\"The age of the dragon\")\n\
+      \    dragon_personality_traits: List[str] = (\n        Field(..., description=\"\
+      A list of personality traits that describe the dragon\")\n    )\n    dragon_skills:\
+      \ List[str] = (\n        Field(..., description=\"A list of skills that the\
+      \ dragon possesses\")\n    )\n    dragon_habits: List[str] = (\n        Field(...,\
+      \ description=\"A list of habits that the dragon has\")\n    )\n    dragon_strengths:\
+      \ List[str] = (\n        Field(..., description=\"A list of strengths that the\
+      \ dragon has\")\n    )\n    dragon_weaknesses: List[str] = (\n        Field(...,\
+      \ description=\"A list of weaknesses that the dragon has\")\n    )\n    dragon_motivations:\
+      \ List[str] = (\n        Field(..., description=\"A list of motivations that\
+      \ drive the dragon's actions\")\n    )\n\n\nclass PlanMoonLandingSequenceOutput(BaseModel):\n\
+      \    \"\"\"Pydantic model for plan_moon_landing_sequence node outputs.\"\"\"\
+      \n    moon_landing_sequence: str = (\n        Field(..., description=\"A detailed\
+      \ description of the sequence of events leading to the moon landing\")\n   \
+      \ )\n    preparation_steps: List[str] = (\n        Field(..., description=\"\
+      List of preparation steps taken by the protagonist and dragon before launching\
+      \ to the moon\")\n    )\n    flight_details: List[str] = (\n        Field(...,\
+      \ description=\"List of details about the flight to the moon, including navigation,\
+      \ propulsion, and communication\")\n    )\n    lunar_exploration_plan: str =\
+      \ (\n        Field(..., description=\"A detailed plan for the protagonist and\
+      \ dragon's lunar exploration, including sites to visit and experiments to conduct\"\
+      )\n    )\n    landing_site_coordinates: List[float] = (\n        Field(...,\
+      \ description=\"List of coordinates for the planned moon landing site\")\n \
+      \   )\n    sequence_completion_status: bool = (\n        Field(..., description=\"\
+      Whether the moon landing sequence has been successfully planned\")\n    )\n\n\
+      \ndef plan_moon_landing_sequence(create_protagonist_character_profile_input:\
+      \ CreateProtagonistCharacterProfileOutput, design_dragon_character_profile_input:\
+      \ DesignDragonCharacterProfileOutput, **kwargs) -> PlanMoonLandingSequenceOutput:\n\
+      \    \"\"\"\n    Plans a moon landing sequence for the protagonist and dragon.\n\
+      \n    Parameters\n    ----------\n    protagonist_profile : dict\n        The\
+      \ protagonist's character profile, including name, age,\n        background,\
+      \ strengths, weaknesses, motivations, and emotions.\n    dragon_profile : dict\n\
+      \        The dragon's character profile, including name, age, personality\n\
+      \        traits, skills, habits, strengths, weaknesses, and motivations.\n\n\
+      \    Returns\n    -------\n    dict\n        A dictionary containing the moon\
+      \ landing sequence, preparation\n        steps, flight details, lunar exploration\
+      \ plan, landing site\n        coordinates, and sequence completion status.\n\
+      \n    Raises\n    ------\n    ValueError\n        If either the protagonist\
+      \ or dragon profile is incomplete or\n        missing.\n\n    Examples\n   \
+      \ --------\n    >>> protagonist_profile = {'name': 'Alice', 'age': 25, 'background':\n\
+      \    'Astronaut', 'strengths': ['Leadership'], 'weaknesses': ['Impulsiveness'],\n\
+      \    'motivations': ['Explore space'], 'emotions': ['Excitement']}\n    >>>\
+      \ dragon_profile = {'name': 'Dragon1', 'age': 100, 'personality_traits':\n \
+      \   ['Loyal'], 'skills': ['Flight'], 'habits': ['Sleeping'], 'strengths':\n\
+      \    ['Speed'], 'weaknesses': ['Vulnerability to fire'], 'motivations': ['Protect\n\
+      \    protagonist']}\n    >>> plan_moon_landing_sequence(protagonist_profile,\
+      \ dragon_profile)\n    {'moon_landing_sequence': 'The protagonist and dragon\
+      \ will prepare for\n    launch, fly to the moon, and conduct lunar exploration.',\n\
+      \    'preparation_steps': ['Check fuel', 'Perform safety checks'],\n    'flight_details':\
+      \ ['Navigate through space', 'Communicate with Earth'],\n    'lunar_exploration_plan':\
+      \ 'Visit craters and conduct experiments.',\n    'landing_site_coordinates':\
+      \ [12.34, 56.78], 'sequence_completion_status':\n    True}\n\n    \"\"\"\n \
+      \   return PlanMoonLandingSequenceOutput(\n        moon_landing_sequence=\"\"\
+      ,\n        preparation_steps=[],\n        flight_details=[],\n        lunar_exploration_plan=\"\
+      \",\n        landing_site_coordinates=[],\n        sequence_completion_status=False,\n\
+      \    )"
     name: plan_moon_landing_sequence
     nodes_depended_on:
     - create_protagonist_character_profile
@@ -390,10 +689,49 @@ nodes:
     prompt: Describe the sequence of events that will lead to the protagonist and
       dragon landing on the moon. Include important details such as preparation, flight,
       and lunar exploration.
+    shims: []
   proofread_and_publish_novel:
     agent: false
+    code_node_type: stub
     description: Carefully review the novel for errors and typos, and prepare it for
       publication, ensuring that it meets the required standards.
+    implementation: "from pydantic import BaseModel, Field\nfrom typing import List\n\
+      \n\nclass EditAndRefineNovelOutput(BaseModel):\n    \"\"\"Pydantic model for\
+      \ edit_and_refine_novel node outputs.\"\"\"\n    edited_novel_content: str =\
+      \ (\n        Field(..., description=\"The refined content of the novel\")\n\
+      \    )\n    revision_notes: List[str] = (\n        Field(..., description=\"\
+      List of notes and comments made during the revision process\")\n    )\n    error_correction_count:\
+      \ int = (\n        Field(..., description=\"The number of errors corrected during\
+      \ the editing process\")\n    )\n    pacing_issues_resolved: bool = (\n    \
+      \    Field(..., description=\"Whether pacing issues in the novel have been resolved\"\
+      )\n    )\n    character_consistency_checks: List[bool] = (\n        Field(...,\
+      \ description=\"List of checks for character consistency throughout the novel\"\
+      )\n    )\n\n\nclass ProofreadAndPublishNovelOutput(BaseModel):\n    \"\"\"Pydantic\
+      \ model for proofread_and_publish_novel node outputs.\"\"\"\n    publication_status:\
+      \ bool = (\n        Field(..., description=\"Whether the novel has been successfully\
+      \ published\")\n    )\n    error_count: int = (\n        Field(..., description=\"\
+      Number of errors found during proofreading\")\n    )\n    typos_corrected: List[str]\
+      \ = (\n        Field(..., description=\"List of typos corrected during proofreading\"\
+      )\n    )\n    publication_format: str = (\n        Field(..., description=\"\
+      Format of the published novel (e.g. eBook, paperback, hardcover)\")\n    )\n\
+      \    publication_date: str = Field(..., description=\"Date of publication\"\
+      )\n\n\ndef proofread_and_publish_novel(edit_and_refine_novel_input: EditAndRefineNovelOutput,\
+      \ **kwargs) -> ProofreadAndPublishNovelOutput:\n    \"\"\"\n    Proofread and\
+      \ publish the novel.\n\n    Parameters\n    ----------\n    edited_novel_content\
+      \ : str\n        The refined content of the novel from the edit_and_refine_novel\
+      \ node\n\n    Returns\n    -------\n    dict\n        A dictionary containing\
+      \ the publication status, error count, typos\n        corrected, publication\
+      \ format, and publication date\n\n    Raises\n    ------\n    ValueError\n \
+      \       If the input novel content is empty or invalid\n\n    Examples\n   \
+      \ --------\n    >>> proofread_and_publish_novel(edited_novel_content='The final\
+      \ draft of the\n    novel.')\n    {'publication_status': True, 'error_count':\
+      \ 0, 'typos_corrected': [],\n    'publication_format': 'eBook', 'publication_date':\
+      \ '2024-01-01'}\n\n    >>> proofread_and_publish_novel(edited_novel_content='The\
+      \ novel with\n    typos.')\n    {'publication_status': True, 'error_count':\
+      \ 1, 'typos_corrected': ['typo1'],\n    'publication_format': 'paperback', 'publication_date':\
+      \ '2024-01-15'}\n\n    \"\"\"\n    return ProofreadAndPublishNovelOutput(\n\
+      \        publication_status=False,\n        error_count=0,\n        typos_corrected=[],\n\
+      \        publication_format=\"\",\n        publication_date=\"\",\n    )"
     name: proofread_and_publish_novel
     nodes_depended_on:
     - edit_and_refine_novel
@@ -444,11 +782,110 @@ nodes:
         summary: Proofread and publish the novel.
     prompt: Thoroughly proofread the novel for errors and typos, and prepare it for
       publication.
+    shims: []
   write_first_draft_of_novel:
     agent: false
+    code_node_type: stub
     description: Generates the initial narrative draft of a children's novel featuring
       a protagonist and dragon journeying to the moon, integrating character profiles,
       landing sequence, and plot twists into chapter structure and key events.
+    implementation: "from pydantic import BaseModel, Field\nfrom typing import List\n\
+      \n\nclass CreateProtagonistCharacterProfileOutput(BaseModel):\n    \"\"\"Pydantic\
+      \ model for create_protagonist_character_profile node outputs.\"\"\"\n    protagonist_name:\
+      \ str = (\n        Field(..., description=\"The name of the protagonist.\")\n\
+      \    )\n    age: int = Field(..., description=\"The age of the protagonist.\"\
+      )\n    background: str = (\n        Field(..., description=\"A brief background\
+      \ description of the protagonist.\")\n    )\n    strengths: List[str] = (\n\
+      \        Field(..., description=\"List of the protagonist's key strengths.\"\
+      )\n    )\n    weaknesses: List[str] = (\n        Field(..., description=\"List\
+      \ of the protagonist's key weaknesses.\")\n    )\n    motivations: List[str]\
+      \ = (\n        Field(..., description=\"List of the protagonist's motivations\
+      \ for the journey.\")\n    )\n    emotions: List[str] = (\n        Field(...,\
+      \ description=\"List of primary emotions the protagonist experiences throughout\
+      \ the story.\")\n    )\n\n\nclass DesignDragonCharacterProfileOutput(BaseModel):\n\
+      \    \"\"\"Pydantic model for design_dragon_character_profile node outputs.\"\
+      \"\"\n    dragon_name: str = Field(..., description=\"The name of the dragon\"\
+      )\n    dragon_age: int = Field(..., description=\"The age of the dragon\")\n\
+      \    dragon_personality_traits: List[str] = (\n        Field(..., description=\"\
+      A list of personality traits that describe the dragon\")\n    )\n    dragon_skills:\
+      \ List[str] = (\n        Field(..., description=\"A list of skills that the\
+      \ dragon possesses\")\n    )\n    dragon_habits: List[str] = (\n        Field(...,\
+      \ description=\"A list of habits that the dragon has\")\n    )\n    dragon_strengths:\
+      \ List[str] = (\n        Field(..., description=\"A list of strengths that the\
+      \ dragon has\")\n    )\n    dragon_weaknesses: List[str] = (\n        Field(...,\
+      \ description=\"A list of weaknesses that the dragon has\")\n    )\n    dragon_motivations:\
+      \ List[str] = (\n        Field(..., description=\"A list of motivations that\
+      \ drive the dragon's actions\")\n    )\n\n\nclass PlanMoonLandingSequenceOutput(BaseModel):\n\
+      \    \"\"\"Pydantic model for plan_moon_landing_sequence node outputs.\"\"\"\
+      \n    moon_landing_sequence: str = (\n        Field(..., description=\"A detailed\
+      \ description of the sequence of events leading to the moon landing\")\n   \
+      \ )\n    preparation_steps: List[str] = (\n        Field(..., description=\"\
+      List of preparation steps taken by the protagonist and dragon before launching\
+      \ to the moon\")\n    )\n    flight_details: List[str] = (\n        Field(...,\
+      \ description=\"List of details about the flight to the moon, including navigation,\
+      \ propulsion, and communication\")\n    )\n    lunar_exploration_plan: str =\
+      \ (\n        Field(..., description=\"A detailed plan for the protagonist and\
+      \ dragon's lunar exploration, including sites to visit and experiments to conduct\"\
+      )\n    )\n    landing_site_coordinates: List[float] = (\n        Field(...,\
+      \ description=\"List of coordinates for the planned moon landing site\")\n \
+      \   )\n    sequence_completion_status: bool = (\n        Field(..., description=\"\
+      Whether the moon landing sequence has been successfully planned\")\n    )\n\n\
+      \nclass DevelopPlotTwistsAndTurnsOutput(BaseModel):\n    \"\"\"Pydantic model\
+      \ for develop_plot_twists_and_turns node outputs.\"\"\"\n    plot_twist_descriptions:\
+      \ List[str] = (\n        Field(..., description=\"List of descriptions for each\
+      \ plot twist\")\n    )\n    obstacle_types: List[str] = (\n        Field(...,\
+      \ description=\"List of types of obstacles the protagonist and dragon will face\"\
+      )\n    )\n    conflict_resolution_outcomes: List[bool] = (\n        Field(...,\
+      \ description=\"List of boolean outcomes indicating whether each conflict is\
+      \ resolved successfully\")\n    )\n    turning_point_count: int = (\n      \
+      \  Field(..., description=\"Number of turning points in the plot\")\n    )\n\
+      \    protagonist_growth_description: str = (\n        Field(..., description=\"\
+      Description of the protagonist's growth and development throughout the plot\
+      \ twists and turns\")\n    )\n\n\nclass WriteFirstDraftOfNovelOutput(BaseModel):\n\
+      \    \"\"\"Pydantic model for write_first_draft_of_novel node outputs.\"\"\"\
+      \n    novel_title: str = Field(..., description=\"The title of the novel\")\n\
+      \    protagonist_name: str = (\n        Field(..., description=\"Name of the\
+      \ protagonist as defined in the character profile\")\n    )\n    dragon_name:\
+      \ str = (\n        Field(..., description=\"Name or designation of the dragon\
+      \ as defined in the character profile\")\n    )\n    chapter_titles: List[str]\
+      \ = (\n        Field(..., description=\"List of chapter titles in order\")\n\
+      \    )\n    chapter_summaries: List[str] = (\n        Field(..., description=\"\
+      Brief summary of each chapter aligned with chapter_titles\")\n    )\n    key_events:\
+      \ List[str] = (\n        Field(..., description=\"List of major events that\
+      \ occur in the novel, each described in a single sentence\")\n    )\n    theme:\
+      \ str = Field(..., description=\"Primary theme or moral of the story\")\n  \
+      \  word_count: int = (\n        Field(..., description=\"Estimated total word\
+      \ count of the first draft\")\n    )\n\n\ndef write_first_draft_of_novel(create_protagonist_character_profile_input:\
+      \ CreateProtagonistCharacterProfileOutput, design_dragon_character_profile_input:\
+      \ DesignDragonCharacterProfileOutput, plan_moon_landing_sequence_input: PlanMoonLandingSequenceOutput,\
+      \ develop_plot_twists_and_turns_input: DevelopPlotTwistsAndTurnsOutput, **kwargs)\
+      \ -> WriteFirstDraftOfNovelOutput:\n    \"\"\"\n    Generate a first‑draft novel\
+      \ from character profiles, landing sequence, and\n    plot twists.\n\n    Parameters\n\
+      \    ----------\n    protagonist_profile : dict\n        Dictionary containing\
+      \ protagonist_name, age, background, strengths,\n        weaknesses, motivations,\
+      \ emotions.\n    dragon_profile : dict\n        Dictionary containing dragon_name,\
+      \ dragon_age,\n        dragon_personality_traits, dragon_skills, dragon_habits,\n\
+      \        dragon_strengths, dragon_weaknesses, dragon_motivations.\n    moon_sequence\
+      \ : dict\n        Dictionary containing moon_landing_sequence, preparation_steps,\n\
+      \        flight_details, lunar_exploration_plan, landing_site_coordinates,\n\
+      \        sequence_completion_status.\n    plot_twists : dict\n        Dictionary\
+      \ containing plot_twist_descriptions, obstacle_types,\n        conflict_resolution_outcomes,\
+      \ turning_point_count,\n        protagonist_growth_description.\n\n    Returns\n\
+      \    -------\n    dict\n        A dictionary with keys novel_title, protagonist_name,\
+      \ dragon_name,\n        chapter_titles, chapter_summaries, key_events, theme,\
+      \ and\n        word_count.\n\n    Raises\n    ------\n    ValueError\n     \
+      \   Raised if any required input field is missing or empty.\n    TypeError\n\
+      \        Raised if inputs do not match expected structure or types.\n\n    Examples\n\
+      \    --------\n    >>> draft = write_first_draft_of_novel(protagonist_profile=protagonist,\n\
+      \    ...                                  dragon_profile=dragon,\n    ...  \
+      \                                moon_sequence=moon_seq,\n    ...          \
+      \                        plot_twists=twists)\n    {'novel_title': 'Starlight\
+      \ Riders', 'protagonist_name': 'Luna',\n    'dragon_name': 'Eclipse', ...}\n\
+      \n    >>> print(draft['theme'])\n    'Bravery and friendship can conquer even\
+      \ the sky's limits.'\n\n    \"\"\"\n    return WriteFirstDraftOfNovelOutput(\n\
+      \        novel_title=\"\",\n        protagonist_name=\"\",\n        dragon_name=\"\
+      \",\n        chapter_titles=[],\n        chapter_summaries=[],\n        key_events=[],\n\
+      \        theme=\"\",\n        word_count=0,\n    )"
     name: write_first_draft_of_novel
     nodes_depended_on:
     - create_protagonist_character_profile
@@ -528,3 +965,4 @@ nodes:
           and plot twists.
     prompt: Use the developed characters, sequence of events, and plot twists to write
       the first draft of the novel.
+    shims: []
