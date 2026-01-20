@@ -1,6 +1,6 @@
 dag_type: plain_text
-description: A workflow to construct bath bombs by measuring ingredients, mixing wet
-  and dry components separately, combining them, and molding the final product.
+description: A detailed workflow to create bath bombs by measuring, mixing, molding,
+  and curing ingredients.
 name: construct_bath_bomb
 nodes:
   combine_base_powders:
@@ -24,7 +24,8 @@ nodes:
       hard. Once set, carefully tap the mold to release the bath bomb.
   integrate_wet_mix:
     agent: false
-    description: Gradually incorporate the wet liquid mixture into the dry base powder.
+    description: Gradually incorporate the wet liquid mixture into the dry base powder
+      without triggering the fizz reaction.
     name: integrate_wet_mix
     nodes_depended_on:
     - combine_base_powders
