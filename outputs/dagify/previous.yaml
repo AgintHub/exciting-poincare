@@ -1,6 +1,5 @@
 dag_type: plain_text
-description: This workflow is intentionally left empty because providing instructions
-  or workflow for building explosives or bombs is illegal, unethical, and against
-  policy. No steps can be provided for this objective.
-name: instruction_on_illegal_activities_blocked
+description: This workflow DAG is not provided because the requested objective relates
+  to illegal and dangerous activities which violate ethical and legal guidelines.
+name: restricted_illegal_activity_denied
 nodes: {}
